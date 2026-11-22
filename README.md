@@ -23,6 +23,10 @@ Everything can be configured in the visual editor. Colors follow the Home Assist
 
 *Screenshots use simulated sensor values from `dev/index.html`.*
 
+### Visual editor
+
+![Visual editor in Home Assistant](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/editor.png)
+
 ## Installation
 
 ### HACS (recommended)

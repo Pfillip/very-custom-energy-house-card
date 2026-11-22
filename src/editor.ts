@@ -108,16 +108,11 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
         expanded: true,
         schema: [
           { name: "pv", selector: SENSOR },
-          {
-            type: "grid",
-            name: "",
-            schema: [
-              { name: "grid", selector: SENSOR },
-              { name: "grid_invert", selector: { boolean: {} } },
-              { name: "battery", selector: SENSOR },
-              { name: "battery_invert", selector: { boolean: {} } },
-            ],
-          },
+          // Sensor and its sign switch stacked: side by side the entity names get truncated.
+          { name: "grid", selector: SENSOR },
+          { name: "grid_invert", selector: { boolean: {} } },
+          { name: "battery", selector: SENSOR },
+          { name: "battery_invert", selector: { boolean: {} } },
           { name: "battery_soc", selector: SENSOR },
           { name: "home", selector: SENSOR },
         ],

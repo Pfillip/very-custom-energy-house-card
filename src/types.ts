@@ -102,6 +102,8 @@ export interface CardConfig {
   kpis?: KpisConfig;
   show_consumers?: boolean;
   show_kpis?: boolean;
+  /** bar card: show lighting and appliance chips above the bar */
+  show_chips?: boolean;
   animation?: boolean;
   active_threshold?: number;
   /** color of the "Untracked" segment */

@@ -176,6 +176,27 @@ untracked_color: "#3fa3e8"
 
 Power sensors may report W, kW or MW; values are converted automatically.
 
+### Bar card
+
+The package contains a second card, **Very Custom Energy Bar Card**, with just the consumption bar: total, stacked bar and legend, plus optional key figures and chips. Use it to place the bar somewhere else than the house – for example the house on an overview page and the bar next to your room cards. For a house without bar, turn off `show_consumers` and `show_kpis` in the house card.
+
+```yaml
+type: custom:very-custom-energy-bar-card
+title: Verbrauch
+entities:
+  pv: sensor.pv_power          # needed to calculate the home consumption …
+  grid: sensor.grid_power
+  battery: sensor.battery_power
+  # home: sensor.house_consumption   # … or set it directly
+consumers:
+  - entity: sensor.kitchen_power
+    name: Küche
+show_chips: false              # lighting and appliance chips above the bar
+show_kpis: true
+```
+
+It takes the same configuration as the house card, so you can copy the YAML from one card to the other; options that only concern the house are ignored.
+
 ### Size and layout
 
 The card adapts to the space it gets – there is nothing to configure:

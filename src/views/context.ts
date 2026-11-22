@@ -1,8 +1,9 @@
 import type { PowerFormatter } from "../format";
 import type { Localizer } from "../localize/localize";
-import type { CardConfig, DeviceState, Flows, LightingState } from "../types";
+import type { CardConfig, DeviceState, Flows, HomeAssistant, LightingState } from "../types";
 
 export interface ViewContext {
+  hass: HomeAssistant;
   config: CardConfig;
   flows: Flows;
   soc?: number;

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.6.0 (in Arbeit)
+
+### Neu
+- **Balken-Karte** (`custom:very-custom-energy-bar-card`): eine zweite Karte im selben Paket mit nur dem Verbrauchsbalken – Gesamtleistung, Balken, Legende, optional Kennzahlen (`show_kpis`, an) und Chips (`show_chips`, aus). Sie nutzt dieselbe Konfiguration wie die Hauskarte und hat einen eigenen, schlankeren Editor. Im Layout-Tab ist sie ab 4 Spalten × 2 Reihen nutzbar.
+
 ## v0.5.0
 
 ### Neu

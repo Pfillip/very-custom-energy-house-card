@@ -6,7 +6,7 @@ import typescript from "@rollup/plugin-typescript";
 const dev = process.env.ROLLUP_WATCH === "true";
 
 export default {
-  input: "src/very-custom-energy-house-card.ts",
+  input: "src/index.ts",
   output: {
     file: "dist/very-custom-energy-house-card.js",
     format: "es",

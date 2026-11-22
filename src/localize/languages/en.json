@@ -1,7 +1,8 @@
 {
   "card": {
     "name": "Very Custom Energy House Card",
-    "description": "Solar, battery, grid, large appliances and consumers in one house illustration."
+    "description": "Solar, battery, grid, large appliances and consumers in one house illustration.",
+    "bar_description": "Just the consumption bar with total, legend and key figures."
   },
   "label": {
     "pv": "Solar",
@@ -31,7 +32,8 @@
     "lighting": "Outdoor lighting",
     "on": "on",
     "garden_lighting": "Garden lighting",
-    "indoor_lighting": "Indoor lights"
+    "indoor_lighting": "Indoor lights",
+    "no_consumers": "No consumers configured yet."
   },
   "editor": {
     "title": "Title (optional)",
@@ -103,6 +105,7 @@
     "weight_bold": "Bold",
     "untracked_color": "Color of “Untracked”",
     "section_indoor_lighting": "Indoor lights",
-    "brightness": "Brightness (optional, e.g. number or input_number)"
+    "brightness": "Brightness (optional, e.g. number or input_number)",
+    "show_chips": "Show lighting and appliance chips"
   }
 }

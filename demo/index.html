@@ -120,6 +120,7 @@
   <div class="cards" id="cards">
     <figure id="fig-house"><figcaption>House view (<code>view: switch</code> – use the buttons in the card header)</figcaption></figure>
     <figure id="fig-flow"><figcaption>Flow view (<code>view: flow</code>, appliances hidden while inactive)</figcaption></figure>
+    <figure id="fig-bar" style="grid-column: 1 / -1"><figcaption>Bar card (<code>custom:very-custom-energy-bar-card</code>) – same configuration, just the consumption bar, chips and key figures</figcaption></figure>
   </div>
 
   <details>
@@ -201,6 +202,9 @@
   await customElements.whenDefined("very-custom-energy-house-card");
   const house = document.createElement("very-custom-energy-house-card");
   const flow = document.createElement("very-custom-energy-house-card");
+  const bar = document.createElement("very-custom-energy-bar-card");
+  bar.setConfig({ ...CONFIG, type: "custom:very-custom-energy-bar-card", title: "Consumption", show_chips: true });
+  document.getElementById("fig-bar").prepend(bar);
   house.setConfig(CONFIG);
   flow.setConfig(FLOW_CONFIG);
   document.getElementById("fig-house").prepend(house);
@@ -224,6 +228,7 @@
     const h = hass();
     house.hass = h;
     flow.hass = h;
+    bar.hass = h;
   }
   document.getElementById("scenario").addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b) return;

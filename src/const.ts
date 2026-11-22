@@ -2,6 +2,8 @@ import pkg from "../package.json";
 
 export const CARD_TYPE = "very-custom-energy-house-card";
 export const EDITOR_TYPE = `${CARD_TYPE}-editor`;
+export const BAR_CARD_TYPE = "very-custom-energy-bar-card";
+export const BAR_EDITOR_TYPE = `${BAR_CARD_TYPE}-editor`;
 export const CARD_VERSION: string = pkg.version;
 
 /** Power (W) from which a device counts as active and a flow is drawn. */

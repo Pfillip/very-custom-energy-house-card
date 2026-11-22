@@ -2,7 +2,7 @@ import { mdiArrowDown, mdiArrowUp, mdiDelete, mdiFormatListBulleted, mdiHeatPump
 import { css, html, LitElement, nothing, type TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { consumerColor } from "./compute";
-import { DEFAULT_ACTIVE_THRESHOLD, DEVICE_COLORS, EDITOR_TYPE } from "./const";
+import { BAR_EDITOR_TYPE, DEFAULT_ACTIVE_THRESHOLD, DEVICE_COLORS, EDITOR_TYPE } from "./const";
 import { localizer, type Localizer } from "./localize/localize";
 import type { CardConfig, ConsumerConfig, DevicesConfig, HomeAssistant } from "./types";
 
@@ -55,6 +55,9 @@ function clean<T>(value: T): T {
 
 @customElement(EDITOR_TYPE)
 export class VeryCustomEnergyHouseCardEditor extends LitElement {
+  /** "bar" hides the options that only concern the house drawing. */
+  protected _variant: "house" | "bar" = "house";
+
   @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private _config?: CardConfig;
@@ -87,19 +90,23 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     const t = this._t;
     return [
       { name: "title", selector: { text: {} } },
-      {
-        name: "view",
-        selector: {
-          select: {
-            mode: "dropdown",
-            options: [
-              { value: "switch", label: t("editor.view_switch") },
-              { value: "house", label: t("editor.view_house") },
-              { value: "flow", label: t("editor.view_flow") },
-            ],
-          },
-        },
-      },
+      ...(this._variant === "bar"
+        ? []
+        : [
+            {
+              name: "view",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "switch", label: t("editor.view_switch") },
+                    { value: "house", label: t("editor.view_house") },
+                    { value: "flow", label: t("editor.view_flow") },
+                  ],
+                },
+              },
+            },
+          ]),
       {
         type: "expandable",
         name: "entities",
@@ -226,8 +233,12 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
         title: this._t("editor.display"),
         icon: "mdi:palette-outline",
         schema: [
-          { name: "show_consumers", selector: { boolean: {} } },
-          { name: "animation", selector: { boolean: {} } },
+          ...(this._variant === "bar"
+            ? [{ name: "show_chips", selector: { boolean: {} } }]
+            : [
+                { name: "show_consumers", selector: { boolean: {} } },
+                { name: "animation", selector: { boolean: {} } },
+              ]),
           {
             name: "total_font_weight",
             selector: {
@@ -266,7 +277,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     const t = this._t;
     const d = c.devices ?? {};
 
-    const mainData = { title: c.title, view: c.view ?? "switch", entities: c.entities ?? {} };
+    const mainData = { title: c.title, view: this._variant === "bar" ? undefined : c.view ?? "switch", entities: c.entities ?? {} };
     const deviceData = {
       wallbox: d.wallbox?.entity,
       wallbox_name: d.wallbox?.name,
@@ -307,6 +318,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     const displayData = {
       show_consumers: c.show_consumers ?? true,
       animation: c.animation ?? true,
+      show_chips: c.show_chips ?? false,
       active_threshold: c.active_threshold ?? DEFAULT_ACTIVE_THRESHOLD,
       total_font_weight: c.total_font_weight ?? "light",
       untracked_color: hexToRgb(c.untracked_color),
@@ -508,6 +520,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     this._update({
       show_consumers: v.show_consumers === false ? false : undefined,
       animation: v.animation === false ? false : undefined,
+      show_chips: v.show_chips ? true : undefined,
       active_threshold: v.active_threshold === DEFAULT_ACTIVE_THRESHOLD ? undefined : v.active_threshold,
       total_font_weight: v.total_font_weight === "light" ? undefined : v.total_font_weight,
       untracked_color: rgbToHex(v.untracked_color),
@@ -619,4 +632,10 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       outline-offset: 2px;
     }
   `;
+}
+
+/** Editor of the bar card: same sections, minus the view choice, the switch for the bar and animation. */
+@customElement(BAR_EDITOR_TYPE)
+export class VeryCustomEnergyBarCardEditor extends VeryCustomEnergyHouseCardEditor {
+  protected _variant: "house" | "bar" = "bar";
 }

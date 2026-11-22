@@ -1,7 +1,8 @@
 {
   "card": {
     "name": "Very Custom Energy House Card",
-    "description": "PV, Akku, Netz, Großverbraucher und Verbraucher in einer Haus-Illustration."
+    "description": "PV, Akku, Netz, Großverbraucher und Verbraucher in einer Haus-Illustration.",
+    "bar_description": "Nur der Verbrauchsbalken mit Gesamtleistung, Legende und Kennzahlen."
   },
   "label": {
     "pv": "PV",
@@ -31,7 +32,8 @@
     "lighting": "Außenbeleuchtung",
     "on": "an",
     "garden_lighting": "Gartenbeleuchtung",
-    "indoor_lighting": "Licht im Haus"
+    "indoor_lighting": "Licht im Haus",
+    "no_consumers": "Noch keine Verbraucher konfiguriert."
   },
   "editor": {
     "title": "Titel (optional)",
@@ -103,6 +105,7 @@
     "weight_bold": "Fett",
     "untracked_color": "Farbe „Nicht erfasst“",
     "section_indoor_lighting": "Licht im Haus",
-    "brightness": "Helligkeit (optional, z. B. number oder input_number)"
+    "brightness": "Helligkeit (optional, z. B. number oder input_number)",
+    "show_chips": "Chips für Beleuchtung und Geräte anzeigen"
   }
 }

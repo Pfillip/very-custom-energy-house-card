@@ -37,6 +37,14 @@ export function clampLabelX(
   return Math.min(maxX - half, Math.max(minX + half, x));
 }
 
+/** Battery gauge: 5 segments; colour by state of charge (red < 20 %, amber < 50 %, green above). */
+export const SOC_SEGMENTS = 5;
+export function socColor(soc: number): string {
+  return soc < 20 ? "#e53935" : soc < 50 ? "#ffb300" : "#43a047";
+}
+/** Number of lit segments, bottom up: 1–20 % → 1, …, 81–100 % → 5. */
+export const litSegments = (soc: number): number => Math.min(SOC_SEGMENTS, Math.ceil(Math.max(0, soc) / (100 / SOC_SEGMENTS)));
+
 export const COLOR = {
   pv: "var(--vce-pv-color)",
   grid: "var(--vce-grid-color)",

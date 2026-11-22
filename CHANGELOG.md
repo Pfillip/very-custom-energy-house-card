@@ -4,6 +4,7 @@
 
 ### Neu
 - **Zweites Hausmotiv: Reihenendhaus** (`house_style: terraced`): Flachdach mit PV, dunkler Vorbau, eingeschossiger Anbau mit Haustür, angedeutetes Nachbarhaus, zwei Garagen mit PV und roter Einfahrt, Garten hinter dem Haus. Wechselrichter, Akku und Klimaanlage hängen an der Giebelseite, die Wärmepumpe steht vor dem Haus, die Wallbox an der Garage. Licht im Haus, Beleuchtung vorn und Gartenbeleuchtung funktionieren wie beim bisherigen Haus. Im Editor unter „Hausmotiv“ wählbar.
+- **Akku-Füllstand am Gerät**: Die Akku-Front zeigt den Ladestand als 5 leuchtende Segmente (je 20 %), farbig nach Ladestand – unter 20 % rot, unter 50 % gelb, darüber grün. In beiden Hausmotiven.
 - **Schriftgröße der Beschriftungen** in Haus- und Flussgrafik einstellbar (`label_scale`, 80–200 %, im Editor unter „Darstellung“). Beschriftungen bleiben dabei innerhalb der Grafik, gestapelte Beschriftungen rücken bei großer Schrift auseinander.
 - **Jacuzzi** als neuer Großverbraucher (`devices.jacuzzi`). Im Reihenendhaus-Motiv erscheint er im Garten, solange er läuft, mit dezent animierten Blasen und Dampf. Wie alle Großverbraucher steht er auch im Verbrauchsbalken und in der Flussansicht.
 - **Balken-Karte** (`custom:very-custom-energy-bar-card`): eine zweite Karte im selben Paket mit nur dem Verbrauchsbalken – Gesamtleistung, Balken, Legende, optional Kennzahlen (`show_kpis`, an) und Chips (`show_chips`, aus). Sie nutzt dieselbe Konfiguration wie die Hauskarte und hat einen eigenen, schlankeren Editor. Im Layout-Tab ist sie ab 4 Spalten × 2 Reihen nutzbar.

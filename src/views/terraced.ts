@@ -3,7 +3,7 @@ import { ifDefined } from "lit/directives/if-defined.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { flowDuration } from "../format";
-import { clampLabelX, clickable, COLOR, labelScale, type ViewContext } from "./context";
+import { clampLabelX, clickable, COLOR, labelScale, litSegments, SOC_SEGMENTS, socColor, type ViewContext } from "./context";
 
 /*
  * Second house motif: modern end-of-terrace house with flat roof, dark front volume,
@@ -194,7 +194,13 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
   if (hasBattery) {
     dyn += box(X1, BAT.y0, BAT.z0, 0.45, BAT.y1 - BAT.y0, BAT.z1 - BAT.z0, BOX);
     const soc = Math.max(0, Math.min(1, (ctx.soc ?? 0) / 100));
-    dyn += onSide(X1 + 0.45, BAT.y1 - 0.35, BAT.y1 - 0.2, BAT.z0 + 0.2, BAT.z0 + 0.2 + (BAT.z1 - BAT.z0 - 0.4) * soc, "var(--vce-battery-out-color)", "");
+    // gauge on the front of the battery: dark window, 5 segments lit bottom up, coloured by level
+    const x = X1 + 0.45, y0 = BAT.y0 + 0.22, y1 = BAT.y1 - 0.22, z0 = BAT.z0 + 0.2, z1 = BAT.z1 - 0.2;
+    dyn += onSide(x, y0, y1, z0, z1, "var(--vce-dev-dark-side)", "");
+    const step = (z1 - z0) / SOC_SEGMENTS, lit = litSegments(soc * 100);
+    for (let i = 0; i < SOC_SEGMENTS; i++) {
+      dyn += onSide(x, y0 + 0.08, y1 - 0.08, z0 + i * step + 0.05, z0 + (i + 1) * step - 0.05, i < lit ? socColor(soc * 100) : "var(--vce-lamp-off)", "");
+    }
   }
   if (ac) {
     dyn += box(X1, 2.2, 1.4, 0.6, 1.4, 0.9, BOX);

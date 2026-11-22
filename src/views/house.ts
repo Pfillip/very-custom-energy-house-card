@@ -3,7 +3,7 @@ import { ifDefined } from "lit/directives/if-defined.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { DEVICE_COLORS } from "../const";
 import { flowDuration } from "../format";
-import { clampLabelX, clickable, COLOR, labelScale, type ViewContext } from "./context";
+import { clampLabelX, clickable, COLOR, labelScale, litSegments, SOC_SEGMENTS, socColor, type ViewContext } from "./context";
 import {
   cuboid,
   DARK,
@@ -267,10 +267,15 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
       ${hasBattery
         ? svg`
           ${battery.tpl}
-          ${plain(battery.quad(0.68, 0.84, 0.12, 0.88), "var(--vce-dev-dark-side)")}
-          ${plain(battery.quad(0.68, 0.84, 0.88 - 0.76 * soc, 0.88), COLOR.batOut)}
-          ${led(battery, 0.18, 0.3, 0.1, 0.13, batteryPower >= ctx.threshold, COLOR.batOut)}
-          ${slats(battery, 0.18, 0.5, [0.3, 0.4, 0.5, 0.6, 0.7])}`
+          ${led(battery, 0.4, 0.6, 0.06, 0.09, batteryPower >= ctx.threshold, COLOR.batOut)}
+          ${plain(battery.quad(0.18, 0.82, 0.13, 0.92), "var(--vce-dev-dark-side)")}
+          ${Array.from({ length: SOC_SEGMENTS }, (_, i) => {
+            // segment i counts from the bottom
+            const step = (0.92 - 0.13) / SOC_SEGMENTS;
+            const t1 = 0.92 - i * step - 0.015, t0 = t1 - step + 0.03;
+            const on = i < litSegments(soc * 100);
+            return plain(battery.quad(0.24, 0.76, t0, t1), on ? socColor(soc * 100) : "var(--vce-lamp-off)");
+          })}`
         : nothing}
 
       ${airConditionerTpl}

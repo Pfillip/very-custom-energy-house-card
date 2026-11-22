@@ -18,7 +18,7 @@ import "./editor";
 import { numberFormatter, powerFormatter } from "./format";
 import { localizer } from "./localize/localize";
 import { cardStyles } from "./styles";
-import type { CardConfig, DeviceState, Flows, HomeAssistant } from "./types";
+import type { CardConfig, DeviceState, Flows, FontWeight, HomeAssistant } from "./types";
 import type { ViewContext } from "./views/context";
 import { renderFlow } from "./views/flow";
 import { renderHouse } from "./views/house";
@@ -39,6 +39,8 @@ declare global {
 }
 
 let uidCounter = 0;
+
+const FONT_WEIGHTS: Record<FontWeight, number> = { light: 300, regular: 400, medium: 500, bold: 700 };
 
 @customElement(CARD_TYPE)
 export class VeryCustomEnergyHouseCard extends LitElement {
@@ -243,13 +245,17 @@ export class VeryCustomEnergyHouseCard extends LitElement {
     const tracked = items.reduce((sum, i) => sum + i.power, 0);
     const total = Math.max(flows.home, tracked);
     const untracked = total - tracked;
-    if (untracked > 0) items.push({ name: ctx.t("label.untracked"), color: UNTRACKED_COLOR, power: untracked });
+    if (untracked > 0) items.push({
+        name: ctx.t("label.untracked"),
+        color: this._config?.untracked_color || UNTRACKED_COLOR,
+        power: untracked,
+      });
     const n0 = numberFormatter(hass);
     const n1 = numberFormatter(hass, 1);
 
     return html`<div class="consumption">
       <div class="consumption-row">
-        <div class="total">${n0(total)}<small>W</small></div>
+        <div class="total" style=${styleMap({ fontWeight: String(FONT_WEIGHTS[this._config?.total_font_weight ?? "light"]) })}>${n0(total)}<small>W</small></div>
         <div class="bar">
           ${items.map((i) => {
             const pct = total > 0 ? (i.power / total) * 100 : 0;

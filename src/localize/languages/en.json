@@ -94,6 +94,12 @@
     "power_sensor": "Power sensor",
     "power_optional": "Power sensor (optional, for the consumption bar)",
     "light_entity": "Light or switch",
-    "hide_inactive": "Only show while active"
+    "hide_inactive": "Only show while active",
+    "total_font_weight": "Font weight of the total",
+    "weight_light": "Light",
+    "weight_regular": "Regular",
+    "weight_medium": "Medium",
+    "weight_bold": "Bold",
+    "untracked_color": "Color of “Untracked”"
   }
 }

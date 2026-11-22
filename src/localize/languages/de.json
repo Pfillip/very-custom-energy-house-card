@@ -94,6 +94,12 @@
     "power_sensor": "Leistungssensor",
     "power_optional": "Leistungssensor (optional, für den Verbrauchsbalken)",
     "light_entity": "Licht oder Schalter",
-    "hide_inactive": "Nur anzeigen, wenn aktiv"
+    "hide_inactive": "Nur anzeigen, wenn aktiv",
+    "total_font_weight": "Schrift der Gesamtleistung",
+    "weight_light": "Leicht",
+    "weight_regular": "Normal",
+    "weight_medium": "Mittel",
+    "weight_bold": "Fett",
+    "untracked_color": "Farbe „Nicht erfasst“"
   }
 }

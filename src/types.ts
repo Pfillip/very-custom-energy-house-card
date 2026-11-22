@@ -27,6 +27,8 @@ export interface ConsumerConfig {
 export interface DeviceConfig {
   entity?: string;
   name?: string;
+  /** hex color used for the cable, flow node, chip and bar segment */
+  color?: string;
 }
 
 export interface HidableDeviceConfig extends DeviceConfig {
@@ -56,6 +58,7 @@ export interface LightingConfig {
   /** optional power sensor; adds the lighting to the consumption bar */
   power?: string;
   name?: string;
+  color?: string;
 }
 
 export interface DevicesConfig {
@@ -94,7 +97,13 @@ export interface CardConfig {
   show_kpis?: boolean;
   animation?: boolean;
   active_threshold?: number;
+  /** color of the "Untracked" segment */
+  untracked_color?: string;
+  /** font weight of the total next to the consumption bar */
+  total_font_weight?: FontWeight;
 }
+
+export type FontWeight = "light" | "regular" | "medium" | "bold";
 
 export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod" | "lighting" | "garden_lighting";
 

@@ -81,20 +81,23 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
     name: string,
     icon: string,
     hideInactive = false,
+    color?: string,
   ) => {
     if (!entity) return;
     const power = Math.max(0, readPower(hass, entity) ?? 0);
     const active = power >= threshold;
-    list.push({ kind, entity, name, icon, color: DEVICE_COLORS[kind], power, active, visible: active || !hideInactive });
+    list.push({ kind, entity, name, icon, color: color || DEVICE_COLORS[kind], power, active, visible: active || !hideInactive });
   };
 
-  add("wallbox", d.wallbox?.entity, d.wallbox?.name || t("label.wallbox"), mdiEvStation);
-  add("heat_pump", d.heat_pump?.entity, d.heat_pump?.name || t("label.heat_pump"), mdiHeatPump);
+  add("wallbox", d.wallbox?.entity, d.wallbox?.name || t("label.wallbox"), mdiEvStation, false, d.wallbox?.color);
+  add("heat_pump", d.heat_pump?.entity, d.heat_pump?.name || t("label.heat_pump"), mdiHeatPump, false, d.heat_pump?.color);
   add(
     "air_conditioner",
     d.air_conditioner?.entity,
     d.air_conditioner?.name || t("label.air_conditioner"),
     mdiAirConditioner,
+    false,
+    d.air_conditioner?.color,
   );
   add(
     "water_heater",
@@ -102,6 +105,7 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
     d.water_heater?.name || t("label.water_heater"),
     mdiWaterBoiler,
     d.water_heater?.hide_inactive,
+    d.water_heater?.color,
   );
   (d.heating_rods?.entities ?? []).forEach((rod, i) =>
     add(
@@ -110,12 +114,13 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
       rod.name || `${t("label.heating_rod")} ${i + 1}`,
       mdiHeatingCoil,
       d.heating_rods?.hide_inactive,
+      rod.color,
     ),
   );
   // Outdoor lighting only shows up as a consumer when it has a power sensor.
   for (const kind of ["lighting", "garden_lighting"] as const) {
     const l = d[kind];
-    if (l?.entity) add(kind, l.power, l.name || t(`label.${kind}`), mdiOutdoorLamp);
+    if (l?.entity) add(kind, l.power, l.name || t(`label.${kind}`), mdiOutdoorLamp, false, l.color);
   }
   return list;
 }
@@ -131,7 +136,7 @@ export function lightingState(
   if (!l?.entity) return undefined;
   return {
     kind,
-    color: DEVICE_COLORS[kind],
+    color: l.color || DEVICE_COLORS[kind],
     entity: l.entity,
     name: l.name || t(`label.${kind}`),
     on: hass.states[l.entity]?.state === "on",

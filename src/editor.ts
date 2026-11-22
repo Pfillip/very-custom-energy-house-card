@@ -141,29 +141,35 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       section(t("label.wallbox"), "mdi:ev-station", [
         { name: "wallbox", selector: SENSOR },
         { name: "wallbox_name", selector: { text: {} } },
+        { name: "wallbox_color", selector: { color_rgb: {} } },
       ], d.wallbox?.entity),
       section(t("label.heat_pump"), "mdi:heat-pump", [
         { name: "heat_pump", selector: SENSOR },
         { name: "heat_pump_name", selector: { text: {} } },
+        { name: "heat_pump_color", selector: { color_rgb: {} } },
       ], d.heat_pump?.entity),
       section(t("label.air_conditioner"), "mdi:air-conditioner", [
         { name: "air_conditioner", selector: SENSOR },
         { name: "air_conditioner_name", selector: { text: {} } },
+        { name: "air_conditioner_color", selector: { color_rgb: {} } },
       ], d.air_conditioner?.entity),
       section(t("label.water_heater"), "mdi:water-boiler", [
         { name: "water_heater", selector: SENSOR },
         { name: "water_heater_name", selector: { text: {} } },
+        { name: "water_heater_color", selector: { color_rgb: {} } },
         { name: "water_heater_hide_inactive", selector: { boolean: {} } },
       ], d.water_heater?.entity),
       section(t("editor.section_lighting"), "mdi:outdoor-lamp", [
         { name: "lighting", selector: LIGHT },
         { name: "lighting_power", selector: SENSOR },
         { name: "lighting_name", selector: { text: {} } },
+        { name: "lighting_color", selector: { color_rgb: {} } },
       ], d.lighting?.entity),
       section(t("editor.section_garden_lighting"), "mdi:outdoor-lamp", [
         { name: "garden_lighting", selector: LIGHT },
         { name: "garden_lighting_power", selector: SENSOR },
         { name: "garden_lighting_name", selector: { text: {} } },
+        { name: "garden_lighting_color", selector: { color_rgb: {} } },
       ], d.garden_lighting?.entity),
     ];
   }
@@ -172,6 +178,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
   private _deviceLabel = (schema: Schema): string => {
     const name = schema.name as string;
     if (name.endsWith("_name")) return this._t("editor.name");
+    if (name.endsWith("_color")) return this._t("editor.color");
     if (name.endsWith("_hide_inactive")) return this._t("editor.hide_inactive");
     if (name.endsWith("_power")) return this._t("editor.power_optional");
     if (name === "lighting" || name === "garden_lighting") return this._t("editor.light_entity");
@@ -214,6 +221,19 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
           { name: "show_consumers", selector: { boolean: {} } },
           { name: "animation", selector: { boolean: {} } },
           {
+            name: "total_font_weight",
+            selector: {
+              select: {
+                mode: "dropdown",
+                options: (["light", "regular", "medium", "bold"] as const).map((w) => ({
+                  value: w,
+                  label: this._t(`editor.weight_${w}`),
+                })),
+              },
+            },
+          },
+          { name: "untracked_color", selector: { color_rgb: {} } },
+          {
             name: "active_threshold",
             selector: { number: { min: 0, max: 5000, step: 1, mode: "box", unit_of_measurement: "W" } },
           },
@@ -255,6 +275,12 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       garden_lighting: d.garden_lighting?.entity,
       garden_lighting_name: d.garden_lighting?.name,
       garden_lighting_power: d.garden_lighting?.power,
+      ...Object.fromEntries(
+        (["wallbox", "heat_pump", "air_conditioner", "water_heater", "lighting", "garden_lighting"] as const).map((k) => [
+          `${k}_color`,
+          hexToRgb(d[k]?.color),
+        ]),
+      ),
     };
     const k = c.kpis ?? {};
     const kpiData = {
@@ -270,6 +296,8 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       show_consumers: c.show_consumers ?? true,
       animation: c.animation ?? true,
       active_threshold: c.active_threshold ?? DEFAULT_ACTIVE_THRESHOLD,
+      total_font_weight: c.total_font_weight ?? "light",
+      untracked_color: hexToRgb(c.untracked_color),
     };
 
     return html`
@@ -295,7 +323,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
               @value-changed=${this._devicesChanged}
             ></ha-form>
             <h4>${t("editor.heating_rods")}</h4>
-            ${this._renderList("heating_rods", d.heating_rods?.entities ?? [], false)}
+            ${this._renderList("heating_rods", d.heating_rods?.entities ?? [], true)}
             <ha-form
               .hass=${this.hass}
               .data=${{ heating_rods_hide_inactive: d.heating_rods?.hide_inactive ?? false }}
@@ -342,7 +370,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
           (row, i) => html`<div class="row">
             <span
               class="swatch"
-              style="background:${kind === "consumers" ? consumerColor(i, row.color) : DEVICE_COLORS.heating_rod}"
+              style="background:${kind === "consumers" ? consumerColor(i, row.color) : row.color || DEVICE_COLORS.heating_rod}"
             ></span>
             <ha-form
               .hass=${this.hass}
@@ -400,19 +428,30 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     ev.stopPropagation();
     const v = ev.detail.value;
     const d: DevicesConfig = { ...(this._config?.devices ?? {}) };
-    d.wallbox = v.wallbox ? { entity: v.wallbox, name: v.wallbox_name } : undefined;
-    d.heat_pump = v.heat_pump ? { entity: v.heat_pump, name: v.heat_pump_name } : undefined;
+    const color = (k: string) => rgbToHex(v[`${k}_color`]);
+    d.wallbox = v.wallbox ? { entity: v.wallbox, name: v.wallbox_name, color: color("wallbox") } : undefined;
+    d.heat_pump = v.heat_pump ? { entity: v.heat_pump, name: v.heat_pump_name, color: color("heat_pump") } : undefined;
     d.air_conditioner = v.air_conditioner
-      ? { entity: v.air_conditioner, name: v.air_conditioner_name }
+      ? { entity: v.air_conditioner, name: v.air_conditioner_name, color: color("air_conditioner") }
       : undefined;
     d.water_heater = v.water_heater
-      ? { entity: v.water_heater, name: v.water_heater_name, hide_inactive: v.water_heater_hide_inactive || undefined }
+      ? {
+          entity: v.water_heater,
+          name: v.water_heater_name,
+          color: color("water_heater"),
+          hide_inactive: v.water_heater_hide_inactive || undefined,
+        }
       : undefined;
     d.lighting = v.lighting
-      ? { entity: v.lighting, name: v.lighting_name, power: v.lighting_power }
+      ? { entity: v.lighting, name: v.lighting_name, power: v.lighting_power, color: color("lighting") }
       : undefined;
     d.garden_lighting = v.garden_lighting
-      ? { entity: v.garden_lighting, name: v.garden_lighting_name, power: v.garden_lighting_power }
+      ? {
+          entity: v.garden_lighting,
+          name: v.garden_lighting_name,
+          power: v.garden_lighting_power,
+          color: color("garden_lighting"),
+        }
       : undefined;
     this._update({ devices: d });
   }
@@ -449,6 +488,8 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       show_consumers: v.show_consumers === false ? false : undefined,
       animation: v.animation === false ? false : undefined,
       active_threshold: v.active_threshold === DEFAULT_ACTIVE_THRESHOLD ? undefined : v.active_threshold,
+      total_font_weight: v.total_font_weight === "light" ? undefined : v.total_font_weight,
+      untracked_color: rgbToHex(v.untracked_color),
     });
   }
 
@@ -472,7 +513,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     rows[index] = {
       entity: (value.entity as string) ?? "",
       name: (value.name as string) || undefined,
-      color: kind === "consumers" ? rgbToHex(value.color as number[]) : undefined,
+      color: rgbToHex(value.color as number[]),
     };
     this._setRows(kind, rows);
   }

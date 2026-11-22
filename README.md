@@ -81,6 +81,7 @@ entities:
 devices:
   wallbox:
     entity: sensor.wallbox_power
+    color: "#66bb6a"
   heat_pump:
     entity: sensor.heat_pump_power
   air_conditioner:
@@ -115,6 +116,8 @@ show_consumers: true
 show_kpis: true
 animation: true
 active_threshold: 10
+total_font_weight: light              # light | regular | medium | bold
+untracked_color: "#3fa3e8"
 ```
 
 </details>
@@ -131,6 +134,8 @@ active_threshold: 10
 | `show_kpis` | boolean | `true` | Show the key figures. `false` hides them completely. |
 | `animation` | boolean | `true` | Animate the flows. |
 | `active_threshold` | number | `10` | Power in W from which an appliance counts as active. |
+| `total_font_weight` | `light` \| `regular` \| `medium` \| `bold` | `light` | Font weight of the total next to the consumption bar. |
+| `untracked_color` | color | `#3fa3e8` | Color of the *Untracked* segment. |
 
 **Sources** (`entities`)
 
@@ -144,7 +149,7 @@ active_threshold: 10
 | `battery_soc` | entity | Battery state of charge in %. |
 | `home` | entity | Home consumption. Calculated from solar + grid + battery if omitted. |
 
-**Appliances and lighting** (`devices`) – each one only appears once it has an entity
+**Appliances and lighting** (`devices`) – each one only appears once it has an entity. Every appliance also takes an optional `color` (hex, e.g. `"#e91e63"`) for its cable, node, chip and bar segment.
 
 | Option | Fields | Description |
 | --- | --- | --- |
@@ -152,7 +157,7 @@ active_threshold: 10
 | `heat_pump` | `entity`, `name` | Outdoor unit next to the gable wall. |
 | `air_conditioner` | `entity`, `name` | Wall-mounted outdoor unit. |
 | `water_heater` | `entity`, `name`, `hide_inactive` | Shown as a chip below the house. |
-| `heating_rods` | `entities` (list of `entity`, `name`), `hide_inactive` | Shown as chips below the house. |
+| `heating_rods` | `entities` (list of `entity`, `name`, `color`), `hide_inactive` | Shown as chips below the house. |
 | `lighting` | `entity`, `power`, `name` | Front garden lighting. `entity` is a light, switch or input_boolean; the optional `power` sensor adds it to the bar. |
 | `garden_lighting` | `entity`, `power`, `name` | Back garden lighting, same options. |
 

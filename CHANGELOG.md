@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.5.0
+
+### Neu
+- **Eigene Farben für alle Verbraucher**: Wallbox, Wärmepumpe, Klimaanlage, Durchlauferhitzer, jeder Heizstab sowie die Beleuchtung vorn und hinten haben jetzt eine Farbe (`color`). Sie gilt für Leitung, Flussknoten, Chip und Balkensegment. Auch das Segment „Nicht erfasst“ lässt sich einfärben (`untracked_color`).
+- **Schrift der Gesamtleistung** neben dem Verbrauchsbalken einstellbar (`total_font_weight`: Leicht, Normal, Mittel, Fett).
+
+### Geändert
+- Die GitHub-Workflows nutzen Actions-Versionen für Node 24.
+- Neue Live-Demo auf GitHub Pages und überarbeitete README.
+
 ## v0.4.1
 
 ### Behoben

@@ -9,6 +9,7 @@ export interface ViewContext {
   devices: DeviceState[];
   lighting?: LightingState;
   gardenLighting?: LightingState;
+  indoorLighting?: LightingState;
   threshold: number;
   t: Localizer;
   power: PowerFormatter;

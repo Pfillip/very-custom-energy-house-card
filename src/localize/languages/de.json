@@ -30,7 +30,8 @@
     "air_conditioner": "Klimaanlage",
     "lighting": "Außenbeleuchtung",
     "on": "an",
-    "garden_lighting": "Gartenbeleuchtung"
+    "garden_lighting": "Gartenbeleuchtung",
+    "indoor_lighting": "Licht im Haus"
   },
   "editor": {
     "title": "Titel (optional)",
@@ -100,6 +101,8 @@
     "weight_regular": "Normal",
     "weight_medium": "Mittel",
     "weight_bold": "Fett",
-    "untracked_color": "Farbe „Nicht erfasst“"
+    "untracked_color": "Farbe „Nicht erfasst“",
+    "section_indoor_lighting": "Licht im Haus",
+    "brightness": "Helligkeit (optional, z. B. number oder input_number)"
   }
 }

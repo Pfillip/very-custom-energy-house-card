@@ -5,6 +5,7 @@
 ### Neu
 - **Eigene Farben für alle Verbraucher**: Wallbox, Wärmepumpe, Klimaanlage, Durchlauferhitzer, jeder Heizstab sowie die Beleuchtung vorn und hinten haben jetzt eine Farbe (`color`). Sie gilt für Leitung, Flussknoten, Chip und Balkensegment. Auch das Segment „Nicht erfasst“ lässt sich einfärben (`untracked_color`).
 - **Schrift der Gesamtleistung** neben dem Verbrauchsbalken einstellbar (`total_font_weight`: Leicht, Normal, Mittel, Fett).
+- **Licht im Haus** (`devices.indoor_lighting`): Ist die Entität an, leuchten Fenster und Türglas. Die Helligkeit folgt dem Helligkeitswert des Lichts oder optional einer eigenen Entität (`brightness`: number, input_number oder Sensor, 0–100 % oder 0–255). Ein Chip zeigt „an · 70 %“, optional mit Leistungssensor für den Verbrauchsbalken.
 - **Kartengröße im Layout-Tab**: Im Sections-Dashboard lässt sich jetzt auch die Höhe einstellen. Bei fester Höhe passt sich die Grafik an, Balken und Kennzahlen scrollen notfalls. Mindestgröße: 6 Spalten × 5 Reihen.
 - **Breites Layout**: Ab etwa 720 px Breite stehen Chips, Verbrauchsbalken und Kennzahlen neben dem Haus statt darunter.
 - **Mitwachsende Schrift**: Gesamtleistung, Legende und Kennzahlen skalieren mit der Kartenbreite.

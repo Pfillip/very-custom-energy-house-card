@@ -1,4 +1,4 @@
-import { mdiHomeOutline, mdiOutdoorLamp, mdiVectorPolyline } from "@mdi/js";
+import { mdiHomeOutline, mdiLightbulbOutline, mdiOutdoorLamp, mdiVectorPolyline } from "@mdi/js";
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -119,6 +119,9 @@ export class VeryCustomEnergyHouseCard extends LitElement {
       c.devices?.lighting?.power,
       c.devices?.garden_lighting?.entity,
       c.devices?.garden_lighting?.power,
+      c.devices?.indoor_lighting?.entity,
+      c.devices?.indoor_lighting?.power,
+      c.devices?.indoor_lighting?.brightness,
       ...(c.devices?.heating_rods?.entities ?? []).map((r) => r.entity),
       ...(c.consumers ?? []).map((r) => r.entity),
       ...Object.values(c.kpis ?? {}).map((k) => k?.entity),
@@ -160,6 +163,7 @@ export class VeryCustomEnergyHouseCard extends LitElement {
       devices,
       lighting: lightingState(hass, config, t, "lighting"),
       gardenLighting: lightingState(hass, config, t, "garden_lighting"),
+      indoorLighting: lightingState(hass, config, t, "indoor_lighting"),
       soc: readNumber(hass, config.entities.battery_soc),
       threshold: activeThreshold(config),
       t,
@@ -212,7 +216,7 @@ export class VeryCustomEnergyHouseCard extends LitElement {
   /** Indoor appliances (water heater, heating rods) shown as chips below the house. */
   private _renderChips(ctx: ViewContext): TemplateResult | typeof nothing {
     const inner = ctx.devices.filter((d) => (d.kind === "water_heater" || d.kind === "heating_rod") && d.visible);
-    const lights = [ctx.lighting, ctx.gardenLighting].filter((l): l is NonNullable<typeof l> => !!l);
+    const lights = [ctx.indoorLighting, ctx.lighting, ctx.gardenLighting].filter((l): l is NonNullable<typeof l> => !!l);
     if (!inner.length && !lights.length) return nothing;
     return html`<div class="chips">
       ${lights.map(
@@ -221,9 +225,13 @@ export class VeryCustomEnergyHouseCard extends LitElement {
           style=${styleMap({ "--chip-color": light.color })}
           @click=${() => this._moreInfo(light.entity)}
         >
-          <ha-svg-icon .path=${mdiOutdoorLamp}></ha-svg-icon>
+          <ha-svg-icon .path=${light.kind === "indoor_lighting" ? mdiLightbulbOutline : mdiOutdoorLamp}></ha-svg-icon>
           ${light.name}
-          <span class="state">${light.on ? ctx.t("label.on") : ctx.t("label.off")}</span>
+          <span class="state"
+            >${light.on ? ctx.t("label.on") : ctx.t("label.off")}${light.on && light.brightness < 1
+              ? ` · ${Math.round(light.brightness * 100)} %`
+              : ""}</span
+          >
         </button>`,
       )}
       ${inner.map(

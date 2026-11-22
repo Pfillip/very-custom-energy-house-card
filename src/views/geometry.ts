@@ -88,6 +88,7 @@ export function windowOn(wall: Wall, u0: number, u1: number, h0: number, h1: num
   return svg`
     ${plain(q(u0, u1, h0, h1), "var(--vce-box-side)")}
     ${plain(q(u0 + du, u1 - du, h0 + dh, h1 - dh), "var(--vce-window)")}
+    <polygon class="glass-lit" points=${pts(q(u0 + du, u1 - du, h0 + dh, h1 - dh))}></polygon>
     <polyline class="mullion" points=${pts([w.p(um, h0 + dh), w.p(um, h1 - dh)])}></polyline>
     <polyline class="mullion" points=${pts([w.p(u0 + du, hm), w.p(u1 - du, hm)])}></polyline>
     ${sill ? cuboid(wall, u0 - 0.01, u1 + 0.01, h1, h1 + 2, 3, ["var(--vce-sill)", "var(--vce-sill)", "var(--vce-box-side)"]).tpl : ""}`;

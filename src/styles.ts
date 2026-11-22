@@ -203,6 +203,13 @@ export const cardStyles = css`
   .lamp-head { fill: var(--vce-lamp-off); transition: fill 0.4s; }
   .on .lamp-head { fill: #ffd27a; }
   .lawn { fill: var(--vce-lawn); }
+  /* Indoor lighting: windows glow; --vce-indoor (0…1) carries on/off and brightness. */
+  .glass-lit {
+    fill: var(--vce-indoor-color, #ffca28);
+    opacity: var(--vce-indoor, 0);
+    filter: drop-shadow(0 0 calc(var(--vce-indoor, 0) * 5px) var(--vce-indoor-color, #ffca28));
+    transition: opacity 0.5s;
+  }
   .hedge { fill: var(--vce-hedge); }
   .trunk { fill: var(--vce-door); }
   .ac-grille { fill: none; stroke: var(--vce-box-line); stroke-width: 1; }

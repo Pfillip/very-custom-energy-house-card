@@ -97,7 +97,11 @@
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button type="button" class="toggle" id="t-front" aria-pressed="false">Front garden</button>
         <button type="button" class="toggle" id="t-garden" aria-pressed="false">Back garden</button>
+        <button type="button" class="toggle" id="t-indoor" aria-pressed="false">Indoors</button>
       </div>
+    </div>
+    <div class="group"><span>Indoor brightness</span>
+      <input type="range" id="brightness" min="5" max="100" value="80" aria-label="Indoor brightness" style="accent-color:#ffca28">
     </div>
     <div class="group"><span>Theme</span>
       <div class="seg" id="theme" role="group" aria-label="Theme">
@@ -144,7 +148,7 @@
     evening: { pv: 420, grid: 1300, bat: 1650, soc: 64, lights: true, ac: 0, wb: 0, hp: 1200, dlh: 0, rod: 0, kitchen: 900, today: 41.2 },
     night:   { pv: 0, grid: 3474, bat: 0, soc: 50, lights: true, ac: 0, wb: 0, hp: 850, dlh: 0, rod: 0, kitchen: 1012, today: 41.9 },
   };
-  const state = { scen: "noon", front: false, garden: false, dark: true, lang: "en" };
+  const state = { scen: "noon", front: false, garden: false, indoor: false, brightness: 80, dark: true, lang: "en" };
 
   const CONFIG = {
     type: "custom:very-custom-energy-house-card",
@@ -161,6 +165,7 @@
       heating_rods: { entities: [{ entity: "sensor.heating_rod_power", name: "Heating rod" }] },
       lighting: { entity: "light.front_garden", power: "sensor.front_garden_lighting_power" },
       garden_lighting: { entity: "light.back_garden" },
+      indoor_lighting: { entity: "light.indoor" },
     },
     consumers: [
       { entity: "sensor.office_power", name: "Office" },
@@ -185,6 +190,7 @@
       "sensor.water_heater_power": P(s.dlh), "sensor.heating_rod_power": P(s.rod),
       "light.front_garden": { state: state.front ? "on" : "off", attributes: {} },
       "light.back_garden": { state: state.garden ? "on" : "off", attributes: {} },
+      "light.indoor": { state: state.indoor ? "on" : "off", attributes: state.indoor ? { brightness: Math.round(state.brightness * 2.55) } : {} },
       "sensor.front_garden_lighting_power": P(state.front ? 120 : 0),
       "sensor.office_power": P(321), "sensor.kitchen_power": P(s.kitchen), "sensor.studio_power": P(269),
     };
@@ -214,13 +220,14 @@
     document.documentElement.classList.toggle("light", !state.dark);
     document.getElementById("t-front").setAttribute("aria-pressed", state.front);
     document.getElementById("t-garden").setAttribute("aria-pressed", state.garden);
+    document.getElementById("t-indoor").setAttribute("aria-pressed", state.indoor);
     const h = hass();
     house.hass = h;
     flow.hass = h;
   }
   document.getElementById("scenario").addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b) return;
-    state.scen = b.dataset.s; state.front = state.garden = SCENARIOS[state.scen].lights;
+    state.scen = b.dataset.s; state.front = state.garden = state.indoor = SCENARIOS[state.scen].lights;
     press("#scenario", "s", state.scen); apply();
   });
   document.getElementById("theme").addEventListener("click", (e) => {
@@ -233,6 +240,8 @@
   });
   document.getElementById("t-front").addEventListener("click", () => { state.front = !state.front; apply(); });
   document.getElementById("t-garden").addEventListener("click", () => { state.garden = !state.garden; apply(); });
+  document.getElementById("t-indoor").addEventListener("click", () => { state.indoor = !state.indoor; apply(); });
+  document.getElementById("brightness").addEventListener("input", (e) => { state.brightness = +e.target.value; state.indoor = true; apply(); });
   window.addEventListener("hass-more-info", (e) => console.info("more-info:", e.detail.entityId));
   apply();
 </script>

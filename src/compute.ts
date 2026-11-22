@@ -1,4 +1,4 @@
-import { mdiAirConditioner, mdiEvStation, mdiOutdoorLamp, mdiHeatingCoil, mdiHeatPump, mdiWaterBoiler } from "@mdi/js";
+import { mdiAirConditioner, mdiEvStation, mdiLightbulbOutline, mdiOutdoorLamp, mdiHeatingCoil, mdiHeatPump, mdiWaterBoiler } from "@mdi/js";
 import { CONSUMER_PALETTE, DEFAULT_ACTIVE_THRESHOLD, DEVICE_COLORS } from "./const";
 import type { Localizer } from "./localize/localize";
 import type { CardConfig, DeviceState, Flows, HomeAssistant, LightingState } from "./types";
@@ -118,14 +118,32 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
     ),
   );
   // Outdoor lighting only shows up as a consumer when it has a power sensor.
-  for (const kind of ["lighting", "garden_lighting"] as const) {
+  for (const kind of ["lighting", "garden_lighting", "indoor_lighting"] as const) {
     const l = d[kind];
-    if (l?.entity) add(kind, l.power, l.name || t(`label.${kind}`), mdiOutdoorLamp, false, l.color);
+    const icon = kind === "indoor_lighting" ? mdiLightbulbOutline : mdiOutdoorLamp;
+    if (l?.entity) add(kind, l.power, l.name || t(`label.${kind}`), icon, false, l.color);
   }
   return list;
 }
 
-/** Switch state of the front or back garden lighting; undefined when not configured. */
+/**
+ * Brightness 0…1 of a lighting group: a separate brightness entity wins (0–100 % or 0–255,
+ * or relative to an input_number's max), otherwise a light's own brightness attribute.
+ */
+export function lightBrightness(hass: HomeAssistant, entity: string, brightnessEntity?: string): number {
+  if (brightnessEntity) {
+    const value = readNumber(hass, brightnessEntity);
+    if (value !== undefined) {
+      const attrs = hass.states[brightnessEntity].attributes;
+      const max = Number(attrs.max) || (attrs.unit_of_measurement === "%" || value <= 100 ? 100 : 255);
+      return Math.max(0, Math.min(1, value / max));
+    }
+  }
+  const raw = Number(hass.states[entity]?.attributes.brightness);
+  return Number.isFinite(raw) && raw > 0 ? Math.min(1, raw / 255) : 1;
+}
+
+/** Switch state of a lighting group (front/back garden, indoors); undefined when not configured. */
 export function lightingState(
   hass: HomeAssistant,
   config: CardConfig,
@@ -140,6 +158,7 @@ export function lightingState(
     entity: l.entity,
     name: l.name || t(`label.${kind}`),
     on: hass.states[l.entity]?.state === "on",
+    brightness: lightBrightness(hass, l.entity, l.brightness),
   };
 }
 

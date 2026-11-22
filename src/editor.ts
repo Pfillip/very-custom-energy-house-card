@@ -165,6 +165,13 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
         { name: "lighting_name", selector: { text: {} } },
         { name: "lighting_color", selector: { color_rgb: {} } },
       ], d.lighting?.entity),
+      section(t("editor.section_indoor_lighting"), "mdi:lightbulb-outline", [
+        { name: "indoor_lighting", selector: LIGHT },
+        { name: "indoor_lighting_brightness", selector: { entity: { filter: { domain: ["number", "input_number", "sensor"] } } } },
+        { name: "indoor_lighting_power", selector: SENSOR },
+        { name: "indoor_lighting_name", selector: { text: {} } },
+        { name: "indoor_lighting_color", selector: { color_rgb: {} } },
+      ], d.indoor_lighting?.entity),
       section(t("editor.section_garden_lighting"), "mdi:outdoor-lamp", [
         { name: "garden_lighting", selector: LIGHT },
         { name: "garden_lighting_power", selector: SENSOR },
@@ -181,7 +188,8 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     if (name.endsWith("_color")) return this._t("editor.color");
     if (name.endsWith("_hide_inactive")) return this._t("editor.hide_inactive");
     if (name.endsWith("_power")) return this._t("editor.power_optional");
-    if (name === "lighting" || name === "garden_lighting") return this._t("editor.light_entity");
+    if (name === "lighting" || name === "garden_lighting" || name === "indoor_lighting") return this._t("editor.light_entity");
+    if (name.endsWith("_brightness")) return this._t("editor.brightness");
     return this._t("editor.power_sensor");
   };
 
@@ -275,8 +283,12 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       garden_lighting: d.garden_lighting?.entity,
       garden_lighting_name: d.garden_lighting?.name,
       garden_lighting_power: d.garden_lighting?.power,
+      indoor_lighting: d.indoor_lighting?.entity,
+      indoor_lighting_name: d.indoor_lighting?.name,
+      indoor_lighting_power: d.indoor_lighting?.power,
+      indoor_lighting_brightness: d.indoor_lighting?.brightness,
       ...Object.fromEntries(
-        (["wallbox", "heat_pump", "air_conditioner", "water_heater", "lighting", "garden_lighting"] as const).map((k) => [
+        (["wallbox", "heat_pump", "air_conditioner", "water_heater", "lighting", "garden_lighting", "indoor_lighting"] as const).map((k) => [
           `${k}_color`,
           hexToRgb(d[k]?.color),
         ]),
@@ -451,6 +463,15 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
           name: v.garden_lighting_name,
           power: v.garden_lighting_power,
           color: color("garden_lighting"),
+        }
+      : undefined;
+    d.indoor_lighting = v.indoor_lighting
+      ? {
+          entity: v.indoor_lighting,
+          brightness: v.indoor_lighting_brightness,
+          name: v.indoor_lighting_name,
+          power: v.indoor_lighting_power,
+          color: color("indoor_lighting"),
         }
       : undefined;
     this._update({ devices: d });

@@ -51,6 +51,7 @@ const FACADE = (() => {
     ${windowOn("r", 0.44, 0.56, -34, -16, false)}
     ${plain([f.p(DOOR.u0, 22), f.p(DOOR.u1, 22), f.p(DOOR.u1, 65), f.p(DOOR.u0, 65)], "var(--vce-door)")}
     ${plain([f.p(DOOR.u0 + 0.015, 27), f.p(DOOR.u1 - 0.015, 27), f.p(DOOR.u1 - 0.015, 40), f.p(DOOR.u0 + 0.015, 40)], "var(--vce-window)")}
+    <polygon class="glass-lit" points=${pts([f.p(DOOR.u0 + 0.015, 27), f.p(DOOR.u1 - 0.015, 27), f.p(DOOR.u1 - 0.015, 40), f.p(DOOR.u0 + 0.015, 40)])}></polygon>
     <circle cx=${knob[0].toFixed(1)} cy=${knob[1].toFixed(1)} r="1.1" style="fill:var(--vce-sill)"></circle>
     ${cuboid("f", DOOR.u0 - 0.02, DOOR.u1 + 0.02, 17, 19, 7, DARK).tpl}
     ${cuboid("f", DOOR.u0 - 0.01, DOOR.u1 + 0.01, 62, 65, 5, ["var(--vce-path)", "var(--vce-path)", "var(--vce-path-joint)"]).tpl}`;
@@ -111,6 +112,7 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
   const airConditioner = ctx.devices.find((d) => d.kind === "air_conditioner");
   const lighting = ctx.lighting;
   const garden = ctx.gardenLighting;
+  const indoor = ctx.indoorLighting;
   const batteryPower = f.charge || f.discharge;
   const exporting = f.gridExport > f.gridImport;
   const id = (name: string) => `${uid}-${name}`;
@@ -228,7 +230,8 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
     : nothing;
 
   return svg`
-    <svg class="scene" viewBox="0 0 480 395" role="img" aria-label=${t("label.view_house")}>
+    <svg class="scene" viewBox="0 0 480 395" role="img" aria-label=${t("label.view_house")}
+      style=${`--vce-indoor:${indoor?.on ? (0.25 + 0.75 * indoor.brightness).toFixed(2) : 0};--vce-indoor-color:${indoor?.color ?? "#ffca28"}`}>
       <defs>
         <radialGradient id=${id("pool")}><stop offset="0" stop-color="#ffcf6e" stop-opacity=".38"></stop><stop offset="1" stop-color="#ffcf6e" stop-opacity="0"></stop></radialGradient>
         <linearGradient id=${id("wash")} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd27a" stop-opacity=".4"></stop><stop offset="1" stop-color="#ffd27a" stop-opacity="0"></stop></linearGradient>

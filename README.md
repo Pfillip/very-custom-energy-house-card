@@ -22,7 +22,7 @@
 | 🏠 **House view** | An isometric house with solar roof, windows, front door and garden. Inverter, battery, wallbox, heat pump and air conditioner sit on the walls as 3D units. Cables light up in the color of the energy source and run in the direction of the flow. |
 | 🔀 **Flow view** | Solar, grid, battery and home as nodes with all six flow paths. Dots move faster with more power; the ring around *Home* shows where the energy comes from. |
 | 🔌 **Large appliances** | Wallbox, heat pump, air conditioner, instantaneous water heater and any number of heating rods. Each one only appears once it is configured; water heater and heating rods can hide while inactive. |
-| 💡 **Outdoor lighting** | Front garden (light above the door, bollards along the walkway) and back garden, each following its own light or switch. |
+| 💡 **Lighting** | Front garden (light above the door, bollards along the walkway), back garden and the lights inside the house – the windows glow, dimmed to the light's brightness. Each follows its own light or switch. |
 | 📊 **Consumption bar** | Your consumers and the large appliances as one stacked bar. Whatever is not covered shows up as *Untracked*. |
 | 🔢 **Key figures** | Three slots with your own entities and names, or live self-sufficiency and self-consumption. Hide them completely if you don't need them. |
 | 🎨 **Fits your dashboard** | Visual editor, light and dark themes, energy colors from your theme, English and German. Clicking anything opens its more-info dialog. |
@@ -99,6 +99,9 @@ devices:
     power: sensor.front_garden_power  # optional, adds it to the bar
   garden_lighting:                    # back garden
     entity: light.back_garden
+  indoor_lighting:                    # windows glow
+    entity: light.living_room
+    brightness: input_number.window_glow  # optional
 consumers:
   - entity: sensor.kitchen_power
     name: Küche
@@ -160,6 +163,7 @@ untracked_color: "#3fa3e8"
 | `heating_rods` | `entities` (list of `entity`, `name`, `color`), `hide_inactive` | Shown as chips below the house. |
 | `lighting` | `entity`, `power`, `name` | Front garden lighting. `entity` is a light, switch or input_boolean; the optional `power` sensor adds it to the bar. |
 | `garden_lighting` | `entity`, `power`, `name` | Back garden lighting, same options. |
+| `indoor_lighting` | `entity`, `brightness`, `power`, `name` | Lights inside the house: the windows glow while `entity` is on. The glow follows the light's own brightness, or an optional `brightness` entity (number, input_number or sensor; 0–100 % or 0–255). |
 
 **Consumers and key figures**
 

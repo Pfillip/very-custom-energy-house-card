@@ -30,7 +30,8 @@
     "air_conditioner": "Air conditioner",
     "lighting": "Outdoor lighting",
     "on": "on",
-    "garden_lighting": "Garden lighting"
+    "garden_lighting": "Garden lighting",
+    "indoor_lighting": "Indoor lights"
   },
   "editor": {
     "title": "Title (optional)",
@@ -100,6 +101,8 @@
     "weight_regular": "Regular",
     "weight_medium": "Medium",
     "weight_bold": "Bold",
-    "untracked_color": "Color of “Untracked”"
+    "untracked_color": "Color of “Untracked”",
+    "section_indoor_lighting": "Indoor lights",
+    "brightness": "Brightness (optional, e.g. number or input_number)"
   }
 }

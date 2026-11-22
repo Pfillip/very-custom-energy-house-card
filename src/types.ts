@@ -59,6 +59,11 @@ export interface LightingConfig {
   power?: string;
   name?: string;
   color?: string;
+  /**
+   * indoor lighting only: optional brightness entity (number, input_number or sensor,
+   * 0–100 % or 0–255). Without it a light's own brightness attribute is used.
+   */
+  brightness?: string;
 }
 
 export interface DevicesConfig {
@@ -71,6 +76,8 @@ export interface DevicesConfig {
   lighting?: LightingConfig;
   /** back garden behind the house */
   garden_lighting?: LightingConfig;
+  /** lights inside the house: windows glow while it is on */
+  indoor_lighting?: LightingConfig;
 }
 
 /** One key figure. Without an entity, autarky and self-consumption are calculated live. */
@@ -105,7 +112,7 @@ export interface CardConfig {
 
 export type FontWeight = "light" | "regular" | "medium" | "bold";
 
-export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod" | "lighting" | "garden_lighting";
+export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod" | "lighting" | "garden_lighting" | "indoor_lighting";
 
 export interface DeviceState {
   kind: DeviceKind;
@@ -120,11 +127,13 @@ export interface DeviceState {
 }
 
 export interface LightingState {
-  kind: "lighting" | "garden_lighting";
+  kind: "lighting" | "garden_lighting" | "indoor_lighting";
   color: string;
   entity: string;
   name: string;
   on: boolean;
+  /** 0…1 while on; 1 when no brightness is known */
+  brightness: number;
 }
 
 export interface Flows {

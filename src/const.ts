@@ -28,6 +28,7 @@ export const DEVICE_COLORS = {
   heating_rod: "#d84315",
   lighting: "#f5b941",
   garden_lighting: "#d4e157",
+  indoor_lighting: "#ffca28",
 } as const;
 
 export const UNTRACKED_COLOR = "#3fa3e8";

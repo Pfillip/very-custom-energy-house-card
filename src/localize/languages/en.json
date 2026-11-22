@@ -26,7 +26,8 @@
     "view_house": "House view",
     "view_flow": "Flow view",
     "entity_unavailable": "Entity not available: {entity}",
-    "no_sources": "No energy sensors configured yet."
+    "no_sources": "No energy sensors configured yet.",
+    "air_conditioner": "Air conditioner"
   },
   "editor": {
     "title": "Title (optional)",
@@ -43,7 +44,6 @@
     "battery_soc": "Battery state of charge",
     "home": "Home consumption (optional)",
     "home_helper": "Leave empty to calculate it from solar, grid and battery.",
-    "pv_energy_today": "Solar energy today (optional)",
     "devices": "Large appliances",
     "devices_helper": "Appliances are only shown once a sensor is set. They are added to the consumption bar automatically.",
     "wallbox": "Wallbox power",
@@ -69,6 +69,16 @@
     "active_threshold": "Active from",
     "move_up": "Move up",
     "move_down": "Move down",
-    "remove": "Remove"
+    "remove": "Remove",
+    "air_conditioner": "Air conditioner power",
+    "air_conditioner_name": "Air conditioner name",
+    "kpis": "Key figures",
+    "kpis_helper": "Without an entity, self-sufficiency and self-consumption are calculated from the live values. The third figure is only shown with an entity.",
+    "autarky_entity": "Figure 1 – entity",
+    "autarky_name": "Figure 1 – name",
+    "self_consumption_entity": "Figure 2 – entity",
+    "self_consumption_name": "Figure 2 – name",
+    "pv_today_entity": "Figure 3 – entity",
+    "pv_today_name": "Figure 3 – name"
   }
 }

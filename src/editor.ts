@@ -74,6 +74,10 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
 
   private _label = (schema: Schema): string => this._t(`editor.${schema.name as string}`);
 
+  /** The constant row of the key-figure form shows the helper text as its label. */
+  private _kpiLabel = (schema: Schema): string =>
+    schema.name === "kpis_helper" ? this._t("editor.kpis_helper") : this._label(schema);
+
   private _helper = (schema: Schema): string | undefined =>
     schema.name === "home" ? this._t("editor.home_helper") : undefined;
 
@@ -116,7 +120,6 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
           },
           { name: "battery_soc", selector: SENSOR },
           { name: "home", selector: SENSOR },
-          { name: "pv_energy_today", selector: SENSOR },
         ],
       },
     ];
@@ -132,11 +135,40 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
           { name: "wallbox_name", selector: { text: {} } },
           { name: "heat_pump", selector: SENSOR },
           { name: "heat_pump_name", selector: { text: {} } },
+          { name: "air_conditioner", selector: SENSOR },
+          { name: "air_conditioner_name", selector: { text: {} } },
           { name: "water_heater", selector: SENSOR },
           { name: "water_heater_name", selector: { text: {} } },
         ],
       },
       { name: "water_heater_hide_inactive", selector: { boolean: {} } },
+    ];
+  }
+
+  private _kpiSchema(): Schema[] {
+    const t = this._t;
+    const pair = (key: string) => ({
+      type: "grid",
+      name: "",
+      schema: [
+        { name: `${key}_entity`, selector: SENSOR },
+        { name: `${key}_name`, selector: { text: {} } },
+      ],
+    });
+    return [
+      {
+        type: "expandable",
+        name: "",
+        flatten: true,
+        title: t("editor.kpis"),
+        icon: "mdi:chart-donut",
+        schema: [
+          { type: "constant", name: "kpis_helper", value: "" },
+          pair("autarky"),
+          pair("self_consumption"),
+          pair("pv_today"),
+        ],
+      },
     ];
   }
 
@@ -189,9 +221,20 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       wallbox_name: d.wallbox?.name,
       heat_pump: d.heat_pump?.entity,
       heat_pump_name: d.heat_pump?.name,
+      air_conditioner: d.air_conditioner?.entity,
+      air_conditioner_name: d.air_conditioner?.name,
       water_heater: d.water_heater?.entity,
       water_heater_name: d.water_heater?.name,
       water_heater_hide_inactive: d.water_heater?.hide_inactive ?? false,
+    };
+    const k = c.kpis ?? {};
+    const kpiData = {
+      autarky_entity: k.autarky?.entity,
+      autarky_name: k.autarky?.name,
+      self_consumption_entity: k.self_consumption?.entity,
+      self_consumption_name: k.self_consumption?.name,
+      pv_today_entity: k.pv_today?.entity ?? c.entities?.pv_energy_today,
+      pv_today_name: k.pv_today?.name,
     };
     const displayData = {
       show_consumers: c.show_consumers ?? true,
@@ -241,6 +284,14 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
             ${this._renderList("consumers", c.consumers ?? [], true)}
           </div>
         </ha-expansion-panel>
+
+        <ha-form
+          .hass=${this.hass}
+          .data=${kpiData}
+          .schema=${this._kpiSchema()}
+          .computeLabel=${this._kpiLabel}
+          @value-changed=${this._kpisChanged}
+        ></ha-form>
 
         <ha-form
           .hass=${this.hass}
@@ -322,10 +373,26 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     const d: DevicesConfig = { ...(this._config?.devices ?? {}) };
     d.wallbox = v.wallbox ? { entity: v.wallbox, name: v.wallbox_name } : undefined;
     d.heat_pump = v.heat_pump ? { entity: v.heat_pump, name: v.heat_pump_name } : undefined;
+    d.air_conditioner = v.air_conditioner
+      ? { entity: v.air_conditioner, name: v.air_conditioner_name }
+      : undefined;
     d.water_heater = v.water_heater
       ? { entity: v.water_heater, name: v.water_heater_name, hide_inactive: v.water_heater_hide_inactive || undefined }
       : undefined;
     this._update({ devices: d });
+  }
+
+  private _kpisChanged(ev: CustomEvent): void {
+    ev.stopPropagation();
+    const v = ev.detail.value;
+    const slot = (key: string) => ({ entity: v[`${key}_entity`], name: v[`${key}_name`] });
+    // pv_energy_today moved to kpis.pv_today.entity
+    const entities = { ...(this._config?.entities ?? {}) };
+    delete entities.pv_energy_today;
+    this._update({
+      entities,
+      kpis: { autarky: slot("autarky"), self_consumption: slot("self_consumption"), pv_today: slot("pv_today") },
+    });
   }
 
   private _rodsHideChanged(ev: CustomEvent): void {

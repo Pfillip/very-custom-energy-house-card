@@ -112,6 +112,8 @@ export const cardStyles = css`
   .hp-top, .hp-side, .hp-front { stroke: var(--vce-box-line); stroke-width: 0.6; }
   .hp-fan { fill: none; stroke: var(--vce-box-line); stroke-width: 1.2; }
   .hp-fan.on { stroke: #ef5350; }
+  .ac-grille { fill: none; stroke: var(--vce-box-line); stroke-width: 1; }
+  .ac-grille.on { stroke: #ab47bc; }
   .roof { fill: var(--vce-roof); }
   .roof-edge { stroke: var(--vce-roof-edge); stroke-width: 3; fill: none; stroke-linejoin: round; }
   .panel { fill: var(--vce-panel); stroke: var(--vce-panel-line); stroke-width: 0.8; }
@@ -229,6 +231,8 @@ export const cardStyles = css`
   }
   .kpi { display: grid; gap: 1px; padding: 10px 12px; text-align: center; }
   .kpi + .kpi { border-left: 1px solid var(--divider-color); }
+  .kpi.link { cursor: pointer; }
+  .kpi.link:focus-visible { outline: 2px solid var(--primary-color); outline-offset: -2px; }
   .kpi b { font-size: 17px; font-weight: 500; font-variant-numeric: tabular-nums; }
   .kpi span { font-size: 11.5px; color: var(--secondary-text-color); }
   .spacer { height: 12px; }

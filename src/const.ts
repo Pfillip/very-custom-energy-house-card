@@ -23,6 +23,7 @@ export const CONSUMER_PALETTE = [
 export const DEVICE_COLORS = {
   wallbox: "#66bb6a",
   heat_pump: "#ef5350",
+  air_conditioner: "#ab47bc",
   water_heater: "#26c6da",
   heating_rod: "#d84315",
 } as const;

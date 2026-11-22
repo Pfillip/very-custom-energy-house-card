@@ -105,9 +105,11 @@ export class VeryCustomEnergyHouseCard extends LitElement {
       ...Object.values(c.entities).filter((v): v is string => typeof v === "string"),
       c.devices?.wallbox?.entity,
       c.devices?.heat_pump?.entity,
+      c.devices?.air_conditioner?.entity,
       c.devices?.water_heater?.entity,
       ...(c.devices?.heating_rods?.entities ?? []).map((r) => r.entity),
       ...(c.consumers ?? []).map((r) => r.entity),
+      ...Object.values(c.kpis ?? {}).map((k) => k?.entity),
     ];
     return ids.filter((id): id is string => !!id);
   }
@@ -254,23 +256,51 @@ export class VeryCustomEnergyHouseCard extends LitElement {
     </div>`;
   }
 
-  private _renderKpis(f: Flows, ctx: ViewContext): TemplateResult {
-    const hass = this.hass!;
+  /** Formats an entity state with its unit; percentages without decimals. */
+  private _formatEntity(entityId: string): string {
+    const stateObj = this.hass!.states[entityId];
+    if (!stateObj) return "–";
+    const unit: string = stateObj.attributes.unit_of_measurement ?? "";
+    const value = readNumber(this.hass!, entityId);
+    if (value === undefined) return stateObj.state;
+    return `${numberFormatter(this.hass!, unit === "%" ? 0 : 1)(value)}${unit ? ` ${unit}` : ""}`;
+  }
+
+  private _renderKpis(f: Flows, ctx: ViewContext): TemplateResult | typeof nothing {
+    const config = this._config!;
+    const k = config.kpis ?? {};
     const pct = (v: number) => `${Math.round(v * 100)} %`;
-    const today = readNumber(hass, this._config!.entities.pv_energy_today);
-    const todayUnit = this._config!.entities.pv_energy_today
-      ? hass.states[this._config!.entities.pv_energy_today]?.attributes.unit_of_measurement ?? "kWh"
-      : "kWh";
+    const slots = [
+      {
+        entity: k.autarky?.entity,
+        name: k.autarky?.name || ctx.t("label.autarky"),
+        fallback: f.home > 0 ? pct((f.home - f.gridHome) / f.home) : "–",
+      },
+      {
+        entity: k.self_consumption?.entity,
+        name: k.self_consumption?.name || ctx.t("label.self_consumption"),
+        fallback: f.pv > 0 ? pct((f.pv - f.pvGrid) / f.pv) : "–",
+      },
+      {
+        entity: k.pv_today?.entity || config.entities.pv_energy_today,
+        name: k.pv_today?.name || ctx.t("label.pv_today"),
+        fallback: undefined,
+      },
+    ].filter((s) => s.entity || s.fallback !== undefined);
+    if (!slots.length) return nothing;
+
     return html`<div class="kpis">
-      <div class="kpi"><b>${f.home > 0 ? pct((f.home - f.gridHome) / f.home) : "–"}</b><span>${ctx.t("label.autarky")}</span></div>
-      <div class="kpi">
-        <b>${f.pv > 0 ? pct((f.pv - f.pvGrid) / f.pv) : "–"}</b><span>${ctx.t("label.self_consumption")}</span>
-      </div>
-      ${today !== undefined
-        ? html`<div class="kpi">
-            <b>${numberFormatter(hass, 1)(today)} ${todayUnit}</b><span>${ctx.t("label.pv_today")}</span>
-          </div>`
-        : nothing}
+      ${slots.map(
+        (s) => html`<div
+          class="kpi ${s.entity ? "link" : ""}"
+          role=${s.entity ? "button" : "group"}
+          tabindex=${s.entity ? "0" : "-1"}
+          @click=${() => this._moreInfo(s.entity)}
+          @keydown=${(ev: KeyboardEvent) => (ev.key === "Enter" || ev.key === " ") && this._moreInfo(s.entity)}
+        >
+          <b>${s.entity ? this._formatEntity(s.entity) : s.fallback}</b><span>${s.name}</span>
+        </div>`,
+      )}
     </div>`;
   }
 }

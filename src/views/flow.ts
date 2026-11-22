@@ -84,7 +84,8 @@ export function renderFlow(ctx: ViewContext, uid: string): SVGTemplateResult {
   };
 
   const s = (w: number) => ctx.power(w).join(" ");
-  const gap = 72;
+  // Up to five nodes keep a 72px rhythm; more are squeezed to stay inside the 380px viewBox.
+  const gap = devices.length > 1 ? Math.min(72, 300 / (devices.length - 1)) : 0;
   const deviceNode = (d: DeviceState, i: number) => {
     const y = 190 + (i - (devices.length - 1) / 2) * gap;
     const c = clickable(ctx, d.entity);

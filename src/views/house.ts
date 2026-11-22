@@ -38,6 +38,7 @@ const PATH = {
   grid: "M248,251 L248,274 L448,389.4",
   wallbox: "M170.6,229 L155,220",
   heatPump: "M254,247 L254,270 L298,244.5 L304,248",
+  airConditioner: "M170.6,238.5 L99,197.2 L99,181",
 };
 
 export function renderHouse(ctx: ViewContext): SVGTemplateResult {
@@ -46,6 +47,7 @@ export function renderHouse(ctx: ViewContext): SVGTemplateResult {
   const hasBattery = !!e.battery || !!e.battery_soc;
   const wallbox = ctx.devices.find((d) => d.kind === "wallbox");
   const heatPump = ctx.devices.find((d) => d.kind === "heat_pump");
+  const airConditioner = ctx.devices.find((d) => d.kind === "air_conditioner");
   const batteryPower = f.charge || f.discharge;
   const exporting = f.gridExport > f.gridImport;
 
@@ -119,6 +121,17 @@ export function renderHouse(ctx: ViewContext): SVGTemplateResult {
           <ellipse class="hp-fan ${heatPump.active ? "on" : ""}" cx="318" cy="235.5" rx="5.5" ry="7.5" transform="rotate(-30 318 235.5)"></ellipse>
           <line class="leader" x1="378" y1="214" x2="334" y2="226"></line>
           ${label(404, 188, heatPump.power, heatPump.name, heatPump.entity)}`
+        : nothing}
+
+      ${airConditioner
+        ? svg`
+          ${flow(PATH.airConditioner, airConditioner.power, airConditioner.color)}
+          <polygon class="hp-front" points="92.6,159.5 108.2,168.5 108.2,184.5 92.6,175.5"></polygon>
+          <polyline class="ac-grille ${airConditioner.active ? "on" : ""}" points="95,166.5 105.8,172.7"></polyline>
+          <polyline class="ac-grille ${airConditioner.active ? "on" : ""}" points="95,170 105.8,176.2"></polyline>
+          <polyline class="ac-grille ${airConditioner.active ? "on" : ""}" points="95,173.5 105.8,179.7"></polyline>
+          <line class="leader" x1="91" y1="172" x2="58" y2="182"></line>
+          ${label(46, 206, airConditioner.power, airConditioner.name, airConditioner.entity)}`
         : nothing}
 
       <line class="leader" x1="180" y1="60" x2="180" y2="145"></line>

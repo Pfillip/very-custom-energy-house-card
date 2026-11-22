@@ -39,10 +39,10 @@
 <script type="module">
   const S = (state, unit = "W", extra = {}) => ({ state: String(state), attributes: { unit_of_measurement: unit, device_class: "power", ...extra } });
   const scenarios = {
-    noon:    { pv: 10.2, pvU: "kW", grid: -388, bat: -1800, soc: 78, wb: 3700, hp: 450, dlh: 0, rod1: 2000, rod2: 0, k: 620 },
-    morning: { pv: 0.9, pvU: "kW", grid: 20235, bat: 2500, soc: 41, wb: 0, hp: 1100, dlh: 21300, rod1: 0, rod2: 0, k: 640 },
-    evening: { pv: 0.42, pvU: "kW", grid: 1300, bat: 1650, soc: 64, wb: 0, hp: 1200, dlh: 0, rod1: 0, rod2: 0, k: 900 },
-    night:   { pv: 0, pvU: "kW", grid: 3474, bat: 0, soc: 50, wb: 0, hp: 850, dlh: 0, rod1: 0, rod2: 0, k: 1012 },
+    noon:    { pv: 10.2, pvU: "kW", grid: -388, bat: -1800, soc: 78, ac: 1450, wb: 3700, hp: 450, dlh: 0, rod1: 2000, rod2: 0, k: 620 },
+    morning: { pv: 0.9, pvU: "kW", grid: 20235, bat: 2500, soc: 41, ac: 0, wb: 0, hp: 1100, dlh: 21300, rod1: 0, rod2: 0, k: 640 },
+    evening: { pv: 0.42, pvU: "kW", grid: 1300, bat: 1650, soc: 64, ac: 0, wb: 0, hp: 1200, dlh: 0, rod1: 0, rod2: 0, k: 900 },
+    night:   { pv: 0, pvU: "kW", grid: 3474, bat: 0, soc: 50, ac: 0, wb: 0, hp: 850, dlh: 0, rod1: 0, rod2: 0, k: 1012 },
   };
   let dark = true;
   function hass(name) {
@@ -55,6 +55,8 @@
       "sensor.pv_energy_today": { state: "24.8", attributes: { unit_of_measurement: "kWh" } },
       "sensor.wallbox_power": S(s.wb),
       "sensor.waermepumpe_power": S(s.hp),
+      "sensor.klima_power": S(s.ac),
+      "sensor.autarkie_heute": { state: "71.4", attributes: { unit_of_measurement: "%" } },
       "sensor.durchlauferhitzer_power": S(s.dlh),
       "sensor.heizstab_puffer_power": S(s.rod1),
       "sensor.heizstab_ww_power": S(s.rod2),
@@ -68,9 +70,12 @@
   const config = {
     type: "custom:very-custom-energy-house-card", title: "Energie", view: "switch",
     entities: { pv: "sensor.pv_power", grid: "sensor.grid_power", battery: "sensor.battery_power",
-      battery_soc: "sensor.battery_soc", pv_energy_today: "sensor.pv_energy_today" },
+      battery_soc: "sensor.battery_soc" },
+    kpis: { autarky: { entity: "sensor.autarkie_heute", name: "Autarkie heute" },
+      pv_today: { entity: "sensor.pv_energy_today", name: "PV-Ertrag" } },
     devices: {
       wallbox: { entity: "sensor.wallbox_power" }, heat_pump: { entity: "sensor.waermepumpe_power" },
+      air_conditioner: { entity: "sensor.klima_power" },
       water_heater: { entity: "sensor.durchlauferhitzer_power", hide_inactive: false },
       heating_rods: { hide_inactive: false, entities: [
         { entity: "sensor.heizstab_puffer_power", name: "Heizstab Puffer" },

@@ -1,4 +1,4 @@
-import { mdiEvStation, mdiHeatingCoil, mdiHeatPump, mdiWaterBoiler } from "@mdi/js";
+import { mdiAirConditioner, mdiEvStation, mdiHeatingCoil, mdiHeatPump, mdiWaterBoiler } from "@mdi/js";
 import { CONSUMER_PALETTE, DEFAULT_ACTIVE_THRESHOLD, DEVICE_COLORS } from "./const";
 import type { Localizer } from "./localize/localize";
 import type { CardConfig, DeviceState, Flows, HomeAssistant } from "./types";
@@ -90,6 +90,12 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
 
   add("wallbox", d.wallbox?.entity, d.wallbox?.name || t("label.wallbox"), mdiEvStation);
   add("heat_pump", d.heat_pump?.entity, d.heat_pump?.name || t("label.heat_pump"), mdiHeatPump);
+  add(
+    "air_conditioner",
+    d.air_conditioner?.entity,
+    d.air_conditioner?.name || t("label.air_conditioner"),
+    mdiAirConditioner,
+  );
   add(
     "water_heater",
     d.water_heater?.entity,

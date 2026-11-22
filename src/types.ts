@@ -46,14 +46,28 @@ export interface SourcesConfig {
   battery_invert?: boolean;
   battery_soc?: string;
   home?: string;
+  /** @deprecated use kpis.pv_today.entity */
   pv_energy_today?: string;
 }
 
 export interface DevicesConfig {
   wallbox?: DeviceConfig;
   heat_pump?: DeviceConfig;
+  air_conditioner?: DeviceConfig;
   water_heater?: HidableDeviceConfig;
   heating_rods?: HeatingRodsConfig;
+}
+
+/** One key figure. Without an entity, autarky and self-consumption are calculated live. */
+export interface KpiConfig {
+  entity?: string;
+  name?: string;
+}
+
+export interface KpisConfig {
+  autarky?: KpiConfig;
+  self_consumption?: KpiConfig;
+  pv_today?: KpiConfig;
 }
 
 export interface CardConfig {
@@ -63,13 +77,14 @@ export interface CardConfig {
   entities: SourcesConfig;
   devices?: DevicesConfig;
   consumers?: ConsumerConfig[];
+  kpis?: KpisConfig;
   show_consumers?: boolean;
   show_kpis?: boolean;
   animation?: boolean;
   active_threshold?: number;
 }
 
-export type DeviceKind = "wallbox" | "heat_pump" | "water_heater" | "heating_rod";
+export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod";
 
 export interface DeviceState {
   kind: DeviceKind;

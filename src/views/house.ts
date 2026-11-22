@@ -24,7 +24,7 @@ import {
 const RP = (u: number, v: number): Pt => [90 + u * 130 + v * 50, 150 + u * 75 - v * 84];
 const PANELS = (() => {
   const out: SVGTemplateResult[] = [];
-  const cols = 5, rows = 2, u0 = 0.07, u1 = 0.93, v0 = 0.12, v1 = 0.9, gu = 0.012, gv = 0.03;
+  const cols = 5, rows = 2, u0 = 0.07, u1 = 0.93, v0 = 0.12, v1 = 0.9, gu = 0.004, gv = 0.01;
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const ua = u0 + ((u1 - u0) * c) / cols + gu;
@@ -73,6 +73,25 @@ const BOLLARDS: Pt[] = [
   pathPoint(DOOR.u0 - 0.05, 0.9),
 ];
 
+/* Back garden: a lawn strip behind the back wall, a small tree, a hedge and three bollards.
+   Drawn before the house, so the house hides whatever lies behind it. */
+const LAWN: Pt[] = [[200, 134], [360, 226], [399, 203.5], [239, 111.5]];
+const GARDEN_BOLLARDS: Pt[] = [[344, 192], [368, 207], [387, 203]];
+const BACK_GARDEN = svg`
+  <polygon class="lawn" points=${pts(LAWN)}></polygon>
+  <ellipse class="hedge" cx="372" cy="186" rx="9" ry="5"></ellipse>
+  <ellipse class="hedge" cx="388" cy="196" rx="8" ry="4.5"></ellipse>
+  <rect class="trunk" x="340.5" y="166" width="3" height="12"></rect>
+  <circle class="hedge" cx="342" cy="160" r="10"></circle>
+  <circle class="hedge" cx="348" cy="165" r="6" style="opacity:.7"></circle>`;
+
+const bollard = ([x, y]: Pt, gradient: string) => svg`
+  <ellipse cx=${x.toFixed(1)} cy=${y.toFixed(1)} rx="2.2" ry="1.1" style="fill:var(--vce-dev-dark-side)"></ellipse>
+  <rect x=${(x - 1.4).toFixed(1)} y=${(y - 10).toFixed(1)} width="2.8" height="10" style="fill:var(--vce-dev-dark)"></rect>
+  <rect class="lamp-head" x=${(x - 2).toFixed(1)} y=${(y - 14).toFixed(1)} width="4" height="4" rx=".8"></rect>
+  <rect x=${(x - 2.4).toFixed(1)} y=${(y - 15.5).toFixed(1)} width="4.8" height="1.8" rx=".8" style="fill:var(--vce-dev-dark)"></rect>
+  <circle class="glow" cx=${x.toFixed(1)} cy=${(y - 12).toFixed(1)} r="6" fill="url(#${gradient})"></circle>`;
+
 const PATH = {
   pv: "M196,211 L220,225 L220,240 L242,227.2",
   battery: "M254,235.3 L264,229.5",
@@ -91,7 +110,7 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
   const heatPump = ctx.devices.find((d) => d.kind === "heat_pump");
   const airConditioner = ctx.devices.find((d) => d.kind === "air_conditioner");
   const lighting = ctx.lighting;
-  const lit = !!lighting?.on;
+  const garden = ctx.gardenLighting;
   const batteryPower = f.charge || f.discharge;
   const exporting = f.gridExport > f.gridImport;
   const id = (name: string) => `${uid}-${name}`;
@@ -154,8 +173,8 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
       ${feet}${c.tpl}
       ${fan(c.face(0.36, 0.5), -30, heatPump.active, heatPump.color)}
       ${slats(c, 0.7, 0.92, [0.2, 0.35, 0.5, 0.65, 0.8])}
-      <line class="leader" x1="378" y1="214" x2="340" y2="226"></line>
-      ${label(404, 188, heatPump.power, heatPump.name, heatPump.entity)}`;
+      <line class="leader" x1="342" y1="232" x2="400" y2="226"></line>
+      ${label(436, 224, heatPump.power, heatPump.name, heatPump.entity)}`;
   })();
 
   const airConditionerTpl = (() => {
@@ -174,13 +193,21 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
   const sconce = cuboid("f", SCONCE.u - 0.014, SCONCE.u + 0.014, SCONCE.h, SCONCE.h + 5, 3, DARK);
   const sconceBulb = sconce.face(0.5, 1);
   const wf = WALL.f;
-  const lightGround = lighting
-    ? svg`<g class="glow">${BOLLARDS.map(
-        ([x, y]) => svg`<ellipse cx=${x.toFixed(1)} cy=${(y + 1).toFixed(1)} rx="15" ry="7.5" fill="url(#${id("pool")})"></ellipse>`,
-      )}</g>`
+  const pools = (list: Pt[], on: boolean) => svg`<g class="glow ${on ? "on" : ""}">${list.map(
+    ([x, y]) => svg`<ellipse cx=${x.toFixed(1)} cy=${(y + 1).toFixed(1)} rx="15" ry="7.5" fill="url(#${id("pool")})"></ellipse>`,
+  )}</g>`;
+  const lightGround = lighting ? pools(BOLLARDS, lighting.on) : nothing;
+  const gardenGround = garden ? pools(GARDEN_BOLLARDS, garden.on) : nothing;
+  const gardenLamps = garden
+    ? (() => {
+        const c = clickable(ctx, garden.entity);
+        return svg`<g class="lamps link ${garden.on ? "on" : ""}" role=${ifDefined(c.role)} tabindex=${ifDefined(c.tabindex)}
+          @click=${c.onClick} @keydown=${c.onKey}><title>${garden.name}</title>
+          ${GARDEN_BOLLARDS.map((p) => bollard(p, id("bulb")))}</g>`;
+      })()
     : nothing;
   const lightWash = lighting
-    ? svg`<g class="glow"><polygon fill="url(#${id("wash")})" points=${pts([
+    ? svg`<g class="glow ${lighting.on ? "on" : ""}"><polygon fill="url(#${id("wash")})" points=${pts([
         wf.p(SCONCE.u - 0.02, SCONCE.h + 5),
         wf.p(SCONCE.u + 0.02, SCONCE.h + 5),
         wf.p(SCONCE.u + 0.06, SCONCE.h + 40),
@@ -191,28 +218,26 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
     ? (() => {
         const c = clickable(ctx, lighting.entity);
         return svg`
-          <g class="lamps link" role=${ifDefined(c.role)} tabindex=${ifDefined(c.tabindex)} @click=${c.onClick} @keydown=${c.onKey}>
+          <g class="lamps link ${lighting.on ? "on" : ""}" role=${ifDefined(c.role)} tabindex=${ifDefined(c.tabindex)} @click=${c.onClick} @keydown=${c.onKey}>
             <title>${lighting.name}</title>
             ${sconce.tpl}
             <circle class="glow" cx=${sconceBulb[0].toFixed(1)} cy=${(sconceBulb[1] + 1).toFixed(1)} r="5" fill="url(#${id("bulb")})"></circle>
-            ${BOLLARDS.map(([x, y]) => svg`
-              <ellipse cx=${x.toFixed(1)} cy=${y.toFixed(1)} rx="2.2" ry="1.1" style="fill:var(--vce-dev-dark-side)"></ellipse>
-              <rect x=${(x - 1.4).toFixed(1)} y=${(y - 10).toFixed(1)} width="2.8" height="10" style="fill:var(--vce-dev-dark)"></rect>
-              <rect class="lamp-head" x=${(x - 2).toFixed(1)} y=${(y - 14).toFixed(1)} width="4" height="4" rx=".8"></rect>
-              <rect x=${(x - 2.4).toFixed(1)} y=${(y - 15.5).toFixed(1)} width="4.8" height="1.8" rx=".8" style="fill:var(--vce-dev-dark)"></rect>
-              <circle class="glow" cx=${x.toFixed(1)} cy=${(y - 12).toFixed(1)} r="6" fill="url(#${id("bulb")})"></circle>`)}
+            ${BOLLARDS.map((p) => bollard(p, id("bulb")))}
           </g>`;
       })()
     : nothing;
 
   return svg`
-    <svg class="scene ${lit ? "lit" : ""}" viewBox="0 0 480 395" role="img" aria-label=${t("label.view_house")}>
+    <svg class="scene" viewBox="0 0 480 395" role="img" aria-label=${t("label.view_house")}>
       <defs>
         <radialGradient id=${id("pool")}><stop offset="0" stop-color="#ffcf6e" stop-opacity=".38"></stop><stop offset="1" stop-color="#ffcf6e" stop-opacity="0"></stop></radialGradient>
         <linearGradient id=${id("wash")} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd27a" stop-opacity=".4"></stop><stop offset="1" stop-color="#ffd27a" stop-opacity="0"></stop></linearGradient>
         <radialGradient id=${id("bulb")}><stop offset="0" stop-color="#fff1c4" stop-opacity=".95"></stop><stop offset=".35" stop-color="#ffd27a" stop-opacity=".5"></stop><stop offset="1" stop-color="#ffd27a" stop-opacity="0"></stop></radialGradient>
       </defs>
       <polygon class="ground" points="62,214 222,306 360,226 200,134"></polygon>
+      ${BACK_GARDEN}
+      ${gardenGround}
+      ${gardenLamps}
       ${WALKWAY}
       ${lightGround}
       <polygon class="wall-l" points="90,150 220,225 220,290 90,215"></polygon>

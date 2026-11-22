@@ -8,7 +8,7 @@ A Home Assistant dashboard card that shows your whole energy system in one place
 ![House view and flow view](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/overview.png)
 
 - **House view** – an isometric house with solar roof, windows, front door and walkway. Inverter, battery and appliances are mounted on the walls as 3D units; cables light up in the color of the energy source and run in the direction of the flow.
-- **Outdoor lighting** – a wall light above the door and bollards along the walkway light up while your outdoor light is on.
+- **Outdoor lighting** – front garden: a wall light above the door and bollards along the walkway; back garden: bollards around the lawn behind the house. Each one follows its own light or switch.
 - **Flow view** – solar, grid, battery and home as nodes with all six flow paths. Dot speed follows the power, the ring around *Home* shows where the energy comes from.
 - **Large appliances** – wallbox, heat pump, air conditioner, instantaneous water heater and any number of heating rods. Each one only appears once it is configured; water heater and heating rods can be hidden while inactive.
 - **Consumption bar** – your consumers and the large appliances as a stacked bar. Whatever is not covered shows up as *Untracked*.
@@ -69,6 +69,8 @@ devices:
   lighting:
     entity: light.outdoor                 # light, switch or input_boolean
     power: sensor.outdoor_lighting_power  # optional, adds it to the bar
+  garden_lighting:
+    entity: light.garden                  # back garden, same options
   water_heater:
     entity: sensor.water_heater_power
     hide_inactive: true
@@ -113,6 +115,7 @@ active_threshold: 10
 | `devices.heat_pump` | object | – | `entity`, optional `name`. |
 | `devices.air_conditioner` | object | – | `entity`, optional `name`. |
 | `devices.lighting` | object | – | `entity` (light, switch or input_boolean), optional `power` sensor and `name`. |
+| `devices.garden_lighting` | object | – | Back garden lighting, same options as `devices.lighting`. |
 | `devices.water_heater` | object | – | `entity`, optional `name`, `hide_inactive`. |
 | `devices.heating_rods` | object | – | `entities` (list of `entity`, `name`), `hide_inactive`. |
 | `consumers` | list | `[]` | `entity`, optional `name` and `color`. |
@@ -120,7 +123,7 @@ active_threshold: 10
 | `kpis.self_consumption` | object | – | Key figure 2: `entity`, `name`. Without entity: live self-consumption. |
 | `kpis.pv_today` | object | – | Key figure 3: `entity`, `name`. Only shown with an entity. |
 | `show_consumers` | boolean | `true` | Show the consumption bar. |
-| `show_kpis` | boolean | `true` | Show the key figures row. |
+| `show_kpis` | boolean | `true` | Show the key figures row. Set to `false` to hide all key figures. |
 | `animation` | boolean | `true` | Animate the flows. |
 | `active_threshold` | number | `10` | Power in W from which a device counts as active. |
 

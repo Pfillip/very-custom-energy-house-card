@@ -13,7 +13,7 @@ import {
   readPower,
   sourceValues,
 } from "./compute";
-import { CARD_TYPE, CARD_VERSION, DEVICE_COLORS, EDITOR_TYPE, UNTRACKED_COLOR } from "./const";
+import { CARD_TYPE, CARD_VERSION, EDITOR_TYPE, UNTRACKED_COLOR } from "./const";
 import "./editor";
 import { numberFormatter, powerFormatter } from "./format";
 import { localizer } from "./localize/localize";
@@ -110,6 +110,8 @@ export class VeryCustomEnergyHouseCard extends LitElement {
       c.devices?.water_heater?.entity,
       c.devices?.lighting?.entity,
       c.devices?.lighting?.power,
+      c.devices?.garden_lighting?.entity,
+      c.devices?.garden_lighting?.power,
       ...(c.devices?.heating_rods?.entities ?? []).map((r) => r.entity),
       ...(c.consumers ?? []).map((r) => r.entity),
       ...Object.values(c.kpis ?? {}).map((k) => k?.entity),
@@ -149,7 +151,8 @@ export class VeryCustomEnergyHouseCard extends LitElement {
       config,
       flows,
       devices,
-      lighting: lightingState(hass, config, t),
+      lighting: lightingState(hass, config, t, "lighting"),
+      gardenLighting: lightingState(hass, config, t, "garden_lighting"),
       soc: readNumber(hass, config.entities.battery_soc),
       threshold: activeThreshold(config),
       t,
@@ -196,20 +199,20 @@ export class VeryCustomEnergyHouseCard extends LitElement {
   /** Indoor appliances (water heater, heating rods) shown as chips below the house. */
   private _renderChips(ctx: ViewContext): TemplateResult | typeof nothing {
     const inner = ctx.devices.filter((d) => (d.kind === "water_heater" || d.kind === "heating_rod") && d.visible);
-    const light = ctx.lighting;
-    if (!inner.length && !light) return nothing;
+    const lights = [ctx.lighting, ctx.gardenLighting].filter((l): l is NonNullable<typeof l> => !!l);
+    if (!inner.length && !lights.length) return nothing;
     return html`<div class="chips">
-      ${light
-        ? html`<button
-            class="chip ${light.on ? "on" : ""}"
-            style=${styleMap({ "--chip-color": DEVICE_COLORS.lighting })}
-            @click=${() => this._moreInfo(light.entity)}
-          >
-            <ha-svg-icon .path=${mdiOutdoorLamp}></ha-svg-icon>
-            ${light.name}
-            <span class="state">${light.on ? ctx.t("label.on") : ctx.t("label.off")}</span>
-          </button>`
-        : nothing}
+      ${lights.map(
+        (light) => html`<button
+          class="chip ${light.on ? "on" : ""}"
+          style=${styleMap({ "--chip-color": light.color })}
+          @click=${() => this._moreInfo(light.entity)}
+        >
+          <ha-svg-icon .path=${mdiOutdoorLamp}></ha-svg-icon>
+          ${light.name}
+          <span class="state">${light.on ? ctx.t("label.on") : ctx.t("label.off")}</span>
+        </button>`,
+      )}
       ${inner.map(
         (d) => html`<button
           class="chip ${d.active ? "on" : ""}"

@@ -113,17 +113,29 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
     ),
   );
   // Outdoor lighting only shows up as a consumer when it has a power sensor.
-  if (d.lighting?.entity) {
-    add("lighting", d.lighting.power, d.lighting.name || t("label.lighting"), mdiOutdoorLamp);
+  for (const kind of ["lighting", "garden_lighting"] as const) {
+    const l = d[kind];
+    if (l?.entity) add(kind, l.power, l.name || t(`label.${kind}`), mdiOutdoorLamp);
   }
   return list;
 }
 
-/** Outdoor lighting switch state; undefined when not configured. */
-export function lightingState(hass: HomeAssistant, config: CardConfig, t: Localizer): LightingState | undefined {
-  const l = config.devices?.lighting;
+/** Switch state of the front or back garden lighting; undefined when not configured. */
+export function lightingState(
+  hass: HomeAssistant,
+  config: CardConfig,
+  t: Localizer,
+  kind: LightingState["kind"],
+): LightingState | undefined {
+  const l = config.devices?.[kind];
   if (!l?.entity) return undefined;
-  return { entity: l.entity, name: l.name || t("label.lighting"), on: hass.states[l.entity]?.state === "on" };
+  return {
+    kind,
+    color: DEVICE_COLORS[kind],
+    entity: l.entity,
+    name: l.name || t(`label.${kind}`),
+    on: hass.states[l.entity]?.state === "on",
+  };
 }
 
 export function consumerColor(index: number, color?: string): string {

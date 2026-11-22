@@ -31,6 +31,8 @@ export const cardStyles = css`
     --vce-path: #d4cdc2;
     --vce-path-joint: #b9b1a5;
     --vce-sill: #e9ecef;
+    --vce-lawn: #d5e6c3;
+    --vce-hedge: #8fb37a;
     display: block;
   }
   :host([dark]) {
@@ -55,6 +57,8 @@ export const cardStyles = css`
     --vce-path: #4a4744;
     --vce-path-joint: #3a3836;
     --vce-sill: #57595c;
+    --vce-lawn: #263224;
+    --vce-hedge: #3c5236;
   }
 
   ha-card {
@@ -138,9 +142,12 @@ export const cardStyles = css`
   .joint { fill: none; stroke: var(--vce-path-joint); stroke-width: 1; }
   .foot { stroke: var(--vce-box-line); stroke-width: 1.6; }
   .glow { opacity: 0; transition: opacity 0.5s; }
-  .lit .glow { opacity: 1; }
+  .on .glow, .glow.on { opacity: 1; }
   .lamp-head { fill: var(--vce-lamp-off); transition: fill 0.4s; }
-  .lit .lamp-head { fill: #ffd27a; }
+  .on .lamp-head { fill: #ffd27a; }
+  .lawn { fill: var(--vce-lawn); }
+  .hedge { fill: var(--vce-hedge); }
+  .trunk { fill: var(--vce-door); }
   .ac-grille { fill: none; stroke: var(--vce-box-line); stroke-width: 1; }
   .ac-grille.on { stroke: #ab47bc; }
   .roof { fill: var(--vce-roof); }

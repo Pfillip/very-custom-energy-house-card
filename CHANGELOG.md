@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.4.0
+
+### Neu
+- **Garten hinter dem Haus** mit Rasen, Baum, Hecke und eigener **Gartenbeleuchtung** (`devices.garden_lighting`): drei Poller, die einer eigenen Licht- oder Schalter-Entität folgen. Wie beim Vorgarten gibt es einen Chip „an/aus“ und optional einen Leistungssensor für den Verbrauchsbalken.
+
+### Geändert
+- **Kennzahlen komplett ausblendbar**: Der Schalter „Kennzahlen anzeigen“ steht jetzt oben im Bereich „Kennzahlen“. Ist er aus, verschwinden die Kennzahlenzeile und die Felder für die drei Plätze.
+- Solarmodule liegen enger beieinander.
+- Die Beschriftung der Wärmepumpe ist etwas nach rechts gerückt, damit sie nicht über dem Garten liegt.
+- Editor: Die Beleuchtungsfelder heißen jetzt „Beleuchtung Vorgarten“ und „Beleuchtung Garten hinten“.
+
 ## v0.3.0
 
 ### Neu

@@ -27,6 +27,7 @@ export const DEVICE_COLORS = {
   water_heater: "#26c6da",
   heating_rod: "#d84315",
   lighting: "#f5b941",
+  garden_lighting: "#d4e157",
 } as const;
 
 export const UNTRACKED_COLOR = "#3fa3e8";

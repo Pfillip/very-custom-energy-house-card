@@ -29,7 +29,8 @@
     "no_sources": "Noch keine Energiesensoren konfiguriert.",
     "air_conditioner": "Klimaanlage",
     "lighting": "Außenbeleuchtung",
-    "on": "an"
+    "on": "an",
+    "garden_lighting": "Gartenbeleuchtung"
   },
   "editor": {
     "title": "Titel (optional)",
@@ -82,8 +83,11 @@
     "self_consumption_name": "Kennzahl 2 – Name",
     "pv_today_entity": "Kennzahl 3 – Entität",
     "pv_today_name": "Kennzahl 3 – Name",
-    "lighting": "Außenbeleuchtung (Licht oder Schalter)",
-    "lighting_power": "Außenbeleuchtung – Leistung (optional)",
-    "lighting_name": "Name Außenbeleuchtung"
+    "lighting": "Beleuchtung Vorgarten (Licht oder Schalter)",
+    "lighting_power": "Beleuchtung Vorgarten – Leistung (optional)",
+    "lighting_name": "Name Beleuchtung Vorgarten",
+    "garden_lighting": "Beleuchtung Garten hinten (Licht oder Schalter)",
+    "garden_lighting_name": "Name Beleuchtung Garten hinten",
+    "garden_lighting_power": "Beleuchtung Garten hinten – Leistung (optional)"
   }
 }

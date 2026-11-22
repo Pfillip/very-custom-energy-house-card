@@ -137,13 +137,16 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
           { name: "lighting", selector: { entity: { filter: { domain: ["light", "switch", "input_boolean"] } } } },
           { name: "lighting_name", selector: { text: {} } },
           { name: "lighting_power", selector: SENSOR },
+          { name: "garden_lighting", selector: { entity: { filter: { domain: ["light", "switch", "input_boolean"] } } } },
+          { name: "garden_lighting_name", selector: { text: {} } },
+          { name: "garden_lighting_power", selector: SENSOR },
         ],
       },
       { name: "water_heater_hide_inactive", selector: { boolean: {} } },
     ];
   }
 
-  private _kpiSchema(): Schema[] {
+  private _kpiSchema(show: boolean): Schema[] {
     const t = this._t;
     const pair = (key: string) => ({
       type: "grid",
@@ -161,10 +164,10 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
         title: t("editor.kpis"),
         icon: "mdi:chart-donut",
         schema: [
-          { type: "constant", name: "kpis_helper", value: "" },
-          pair("autarky"),
-          pair("self_consumption"),
-          pair("pv_today"),
+          { name: "show_kpis", selector: { boolean: {} } },
+          ...(show
+            ? [{ type: "constant", name: "kpis_helper", value: "" }, pair("autarky"), pair("self_consumption"), pair("pv_today")]
+            : []),
         ],
       },
     ];
@@ -180,7 +183,6 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
         icon: "mdi:palette-outline",
         schema: [
           { name: "show_consumers", selector: { boolean: {} } },
-          { name: "show_kpis", selector: { boolean: {} } },
           { name: "animation", selector: { boolean: {} } },
           {
             name: "active_threshold",
@@ -227,9 +229,13 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       lighting: d.lighting?.entity,
       lighting_name: d.lighting?.name,
       lighting_power: d.lighting?.power,
+      garden_lighting: d.garden_lighting?.entity,
+      garden_lighting_name: d.garden_lighting?.name,
+      garden_lighting_power: d.garden_lighting?.power,
     };
     const k = c.kpis ?? {};
     const kpiData = {
+      show_kpis: c.show_kpis ?? true,
       autarky_entity: k.autarky?.entity,
       autarky_name: k.autarky?.name,
       self_consumption_entity: k.self_consumption?.entity,
@@ -239,7 +245,6 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     };
     const displayData = {
       show_consumers: c.show_consumers ?? true,
-      show_kpis: c.show_kpis ?? true,
       animation: c.animation ?? true,
       active_threshold: c.active_threshold ?? DEFAULT_ACTIVE_THRESHOLD,
     };
@@ -289,7 +294,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
         <ha-form
           .hass=${this.hass}
           .data=${kpiData}
-          .schema=${this._kpiSchema()}
+          .schema=${this._kpiSchema(c.show_kpis !== false)}
           .computeLabel=${this._kpiLabel}
           @value-changed=${this._kpisChanged}
         ></ha-form>
@@ -383,6 +388,9 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     d.lighting = v.lighting
       ? { entity: v.lighting, name: v.lighting_name, power: v.lighting_power }
       : undefined;
+    d.garden_lighting = v.garden_lighting
+      ? { entity: v.garden_lighting, name: v.garden_lighting_name, power: v.garden_lighting_power }
+      : undefined;
     this._update({ devices: d });
   }
 
@@ -395,6 +403,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     delete entities.pv_energy_today;
     this._update({
       entities,
+      show_kpis: v.show_kpis === false ? false : undefined,
       kpis: { autarky: slot("autarky"), self_consumption: slot("self_consumption"), pv_today: slot("pv_today") },
     });
   }
@@ -415,7 +424,6 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     const v = ev.detail.value;
     this._update({
       show_consumers: v.show_consumers === false ? false : undefined,
-      show_kpis: v.show_kpis === false ? false : undefined,
       animation: v.animation === false ? false : undefined,
       active_threshold: v.active_threshold === DEFAULT_ACTIVE_THRESHOLD ? undefined : v.active_threshold,
     });

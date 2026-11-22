@@ -64,7 +64,10 @@ export interface DevicesConfig {
   air_conditioner?: DeviceConfig;
   water_heater?: HidableDeviceConfig;
   heating_rods?: HeatingRodsConfig;
+  /** front garden: wall light above the door and bollards along the walkway */
   lighting?: LightingConfig;
+  /** back garden behind the house */
+  garden_lighting?: LightingConfig;
 }
 
 /** One key figure. Without an entity, autarky and self-consumption are calculated live. */
@@ -93,7 +96,7 @@ export interface CardConfig {
   active_threshold?: number;
 }
 
-export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod" | "lighting";
+export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod" | "lighting" | "garden_lighting";
 
 export interface DeviceState {
   kind: DeviceKind;
@@ -108,6 +111,8 @@ export interface DeviceState {
 }
 
 export interface LightingState {
+  kind: "lighting" | "garden_lighting";
+  color: string;
   entity: string;
   name: string;
   on: boolean;

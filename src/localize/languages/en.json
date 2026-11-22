@@ -29,7 +29,8 @@
     "no_sources": "No energy sensors configured yet.",
     "air_conditioner": "Air conditioner",
     "lighting": "Outdoor lighting",
-    "on": "on"
+    "on": "on",
+    "garden_lighting": "Garden lighting"
   },
   "editor": {
     "title": "Title (optional)",
@@ -82,8 +83,11 @@
     "self_consumption_name": "Figure 2 – name",
     "pv_today_entity": "Figure 3 – entity",
     "pv_today_name": "Figure 3 – name",
-    "lighting": "Outdoor lighting (light or switch)",
-    "lighting_power": "Outdoor lighting power (optional)",
-    "lighting_name": "Outdoor lighting name"
+    "lighting": "Front garden lighting (light or switch)",
+    "lighting_power": "Front garden lighting power (optional)",
+    "lighting_name": "Front garden lighting name",
+    "garden_lighting": "Back garden lighting (light or switch)",
+    "garden_lighting_name": "Back garden lighting name",
+    "garden_lighting_power": "Back garden lighting power (optional)"
   }
 }

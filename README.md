@@ -20,6 +20,7 @@
 | | |
 | --- | --- |
 | 🏠 **House view** | An isometric house with solar roof, windows, front door and garden. Inverter, battery, wallbox, heat pump and air conditioner sit on the walls as 3D units. Cables light up in the color of the energy source and run in the direction of the flow. |
+| 🏘️ **Two house motifs** | A detached house with gable roof, or an end-of-terrace house with flat roof, neighbour, two garages with PV and a back garden (`house_style: terraced`). |
 | 🔀 **Flow view** | Solar, grid, battery and home as nodes with all six flow paths. Dots move faster with more power; the ring around *Home* shows where the energy comes from. |
 | 🔌 **Large appliances** | Wallbox, heat pump, air conditioner, instantaneous water heater and any number of heating rods. Each one only appears once it is configured; water heater and heating rods can hide while inactive. |
 | 💡 **Lighting** | Front garden (light above the door, bollards along the walkway), back garden and the lights inside the house – the windows glow, dimmed to the light's brightness. Each follows its own light or switch. |
@@ -133,6 +134,7 @@ untracked_color: "#3fa3e8"
 | --- | --- | --- | --- |
 | `title` | string | – | Card title. |
 | `view` | `house` \| `flow` \| `switch` | `switch` | Fixed view, or `switch` to show view buttons in the card. |
+| `house_style` | `classic` \| `terraced` | `classic` | House motif: detached house with gable roof, or end-of-terrace house with flat roof and garages. |
 | `show_consumers` | boolean | `true` | Show the consumption bar. |
 | `show_kpis` | boolean | `true` | Show the key figures. `false` hides them completely. |
 | `animation` | boolean | `true` | Animate the flows. |
@@ -159,6 +161,7 @@ untracked_color: "#3fa3e8"
 | `wallbox` | `entity`, `name` | Wallbox on the front wall. |
 | `heat_pump` | `entity`, `name` | Outdoor unit next to the gable wall. |
 | `air_conditioner` | `entity`, `name` | Wall-mounted outdoor unit. |
+| `jacuzzi` | `entity`, `name` | Hot tub. In the terraced motif it shows up – bubbling and steaming – in the back garden while it is running. |
 | `water_heater` | `entity`, `name`, `hide_inactive` | Shown as a chip below the house. |
 | `heating_rods` | `entities` (list of `entity`, `name`, `color`), `hide_inactive` | Shown as chips below the house. |
 | `lighting` | `entity`, `power`, `name` | Front garden lighting. `entity` is a light, switch or input_boolean; the optional `power` sensor adds it to the bar. |
@@ -210,6 +213,10 @@ The card adapts to the space it gets – there is nothing to configure:
 | House view | Flow view | Light theme |
 | --- | --- | --- |
 | ![House view at noon with solar export, wallbox charging and heating rod active](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/house-view.png) | ![Flow view in the morning with the water heater running](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/flow-view.png) | ![House view in a light theme in the evening with the lights on](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/house-view-light.png) |
+
+**End-of-terrace motif** (`house_style: terraced`):
+
+<img src="https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/terraced.png" alt="End-of-terrace house in the evening with lit windows, garden lighting and the jacuzzi running" width="480">
 
 *Screenshots use simulated sensor values.*
 

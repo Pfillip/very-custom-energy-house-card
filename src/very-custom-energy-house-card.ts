@@ -11,6 +11,7 @@ import type { CardConfig, HomeAssistant } from "./types";
 import type { ViewContext } from "./views/context";
 import { renderFlow } from "./views/flow";
 import { renderHouse } from "./views/house";
+import { renderTerraced } from "./views/terraced";
 
 console.info(
   `%c VERY-CUSTOM-ENERGY-HOUSE-CARD %c v${CARD_VERSION} `,
@@ -51,6 +52,9 @@ export class VeryCustomEnergyHouseCard extends LitElement {
 
   public setConfig(config: CardConfig): void {
     if (!config || typeof config !== "object") throw new Error("Invalid configuration");
+    if (config.house_style && !["classic", "terraced"].includes(config.house_style)) {
+      throw new Error(`Unknown house_style "${config.house_style}" (use classic or terraced)`);
+    }
     if (config.view && !["house", "flow", "switch"].includes(config.view)) {
       throw new Error(`Unknown view "${config.view}" (use house, flow or switch)`);
     }
@@ -109,7 +113,11 @@ export class VeryCustomEnergyHouseCard extends LitElement {
         ${renderWarnings(ctx)}
         <div class="body">
           <div class="scene-wrap">
-            ${view === "house" ? renderHouse(ctx, this._uid) : renderFlow(ctx, this._uid)}
+            ${view === "flow"
+              ? renderFlow(ctx, this._uid)
+              : config.house_style === "terraced"
+                ? renderTerraced(ctx, this._uid)
+                : renderHouse(ctx, this._uid)}
           </div>
           <div class="side">
             ${view === "house" ? renderChips(ctx) : nothing}

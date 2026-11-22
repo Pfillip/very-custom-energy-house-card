@@ -33,6 +33,14 @@ export const cardStyles = css`
     --vce-sill: #e9ecef;
     --vce-lawn: #d5e6c3;
     --vce-hedge: #8fb37a;
+    /* terraced motif */
+    --vce-t-ground: #dfe4e8; --vce-t-street: #b9bdc2; --vce-t-brick: #c9634a; --vce-t-frame: #f4f4f4;
+    --vce-t-hedge-dark: #5f8a4f; --vce-t-gdoor: #a7abb0; --vce-t-nb-dark: #71767c;
+    --vce-t-wall: #e6e8eb; --vce-t-wall-s: #cfd3d7; --vce-t-wall-t: #f4f5f6;
+    --vce-t-dark: #5b6067; --vce-t-dark-s: #4a4e54; --vce-t-dark-t: #6a7077;
+    --vce-t-nb: #d9dcdf; --vce-t-nb-s: #c7cacd; --vce-t-nb-t: #e6e8ea;
+    --vce-t-garage: #cfc6a0; --vce-t-garage-s: #b9b08a; --vce-t-garage-t: #ddd6b4;
+    --vce-t-deck: #a1887f; --vce-t-deck-s: #8d6e63; --vce-t-deck-t: #bcaaa4;
     display: block;
     height: 100%;
   }
@@ -60,6 +68,13 @@ export const cardStyles = css`
     --vce-sill: #57595c;
     --vce-lawn: #263224;
     --vce-hedge: #3c5236;
+    --vce-t-ground: #2a2c2e; --vce-t-street: #3e4144; --vce-t-brick: #7a3f30; --vce-t-frame: #8a8d90;
+    --vce-t-hedge-dark: #2c3e28; --vce-t-gdoor: #5f6368; --vce-t-nb-dark: #303337;
+    --vce-t-wall: #4a4c4f; --vce-t-wall-s: #3a3c3f; --vce-t-wall-t: #56585b;
+    --vce-t-dark: #2c2f33; --vce-t-dark-s: #222528; --vce-t-dark-t: #383b3f;
+    --vce-t-nb: #353739; --vce-t-nb-s: #2c2e30; --vce-t-nb-t: #3d3f41;
+    --vce-t-garage: #5a5440; --vce-t-garage-s: #4a4535; --vce-t-garage-t: #666049;
+    --vce-t-deck: #6d5a52; --vce-t-deck-s: #5a4a43; --vce-t-deck-t: #7b6860;
   }
 
   ha-card {
@@ -203,6 +218,16 @@ export const cardStyles = css`
   .lamp-head { fill: var(--vce-lamp-off); transition: fill 0.4s; }
   .on .lamp-head { fill: #ffd27a; }
   .lawn { fill: var(--vce-lawn); }
+  /* terraced motif */
+  .t-edge { stroke: rgba(0, 0, 0, 0.18); stroke-width: 0.6; stroke-linejoin: round; }
+  .terraced .val { font-size: 20px; }
+  .terraced .unit { font-size: 11px; }
+  .terraced .name { font-size: 11px; }
+  .bubble { fill: #e9f7ff; opacity: 0; animation: vce-bubble 2.4s ease-in infinite; }
+  @keyframes vce-bubble { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 0.85; } 100% { opacity: 0; transform: translateY(-5px); } }
+  .steam { fill: none; stroke: #e9eef2; stroke-width: 1.6; stroke-linecap: round; opacity: 0; animation: vce-steam 4.5s ease-in-out infinite; }
+  @keyframes vce-steam { 0% { opacity: 0; transform: translateY(0); } 35% { opacity: 0.45; } 100% { opacity: 0; transform: translateY(-14px); } }
+  .static .bubble, .static .steam { animation: none; opacity: 0.4; }
   /* Indoor lighting: windows glow; --vce-indoor (0…1) carries on/off and brightness. */
   .glass-lit {
     fill: var(--vce-indoor-color, #ffca28);
@@ -340,5 +365,6 @@ export const cardStyles = css`
   @media (prefers-reduced-motion: reduce) {
     .flow { animation: none; stroke-dasharray: none; }
     .dot { display: none; }
+    .bubble, .steam { animation: none; opacity: 0.4; }
   }
 `;

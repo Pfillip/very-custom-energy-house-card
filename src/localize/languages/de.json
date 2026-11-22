@@ -33,7 +33,8 @@
     "on": "an",
     "garden_lighting": "Gartenbeleuchtung",
     "indoor_lighting": "Licht im Haus",
-    "no_consumers": "Noch keine Verbraucher konfiguriert."
+    "no_consumers": "Noch keine Verbraucher konfiguriert.",
+    "jacuzzi": "Jacuzzi"
   },
   "editor": {
     "title": "Titel (optional)",
@@ -106,6 +107,9 @@
     "untracked_color": "Farbe „Nicht erfasst“",
     "section_indoor_lighting": "Licht im Haus",
     "brightness": "Helligkeit (optional, z. B. number oder input_number)",
-    "show_chips": "Chips für Beleuchtung und Geräte anzeigen"
+    "show_chips": "Chips für Beleuchtung und Geräte anzeigen",
+    "house_style": "Hausmotiv",
+    "style_classic": "Einfamilienhaus mit Satteldach",
+    "style_terraced": "Reihenendhaus mit Flachdach und Garagen"
   }
 }

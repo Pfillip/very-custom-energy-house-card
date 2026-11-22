@@ -85,6 +85,12 @@
   </header>
 
   <section class="controls" aria-label="Demo controls">
+    <div class="group"><span>House</span>
+      <div class="seg" id="style" role="group" aria-label="House motif">
+        <button type="button" data-h="classic" aria-pressed="true">Detached</button>
+        <button type="button" data-h="terraced" aria-pressed="false">End-of-terrace</button>
+      </div>
+    </div>
     <div class="group"><span>Time of day</span>
       <div class="seg" id="scenario" role="group" aria-label="Time of day">
         <button type="button" data-s="morning" aria-pressed="false">Morning</button>
@@ -98,6 +104,7 @@
         <button type="button" class="toggle" id="t-front" aria-pressed="false">Front garden</button>
         <button type="button" class="toggle" id="t-garden" aria-pressed="false">Back garden</button>
         <button type="button" class="toggle" id="t-indoor" aria-pressed="false">Indoors</button>
+        <button type="button" class="toggle" id="t-jacuzzi" aria-pressed="true">Jacuzzi</button>
       </div>
     </div>
     <div class="group"><span>Indoor brightness</span>
@@ -149,7 +156,7 @@
     evening: { pv: 420, grid: 1300, bat: 1650, soc: 64, lights: true, ac: 0, wb: 0, hp: 1200, dlh: 0, rod: 0, kitchen: 900, today: 41.2 },
     night:   { pv: 0, grid: 3474, bat: 0, soc: 50, lights: true, ac: 0, wb: 0, hp: 850, dlh: 0, rod: 0, kitchen: 1012, today: 41.9 },
   };
-  const state = { scen: "noon", front: false, garden: false, indoor: false, brightness: 80, dark: true, lang: "en" };
+  const state = { scen: "noon", front: false, garden: false, indoor: false, brightness: 80, jacuzzi: true, style: "classic", dark: true, lang: "en" };
 
   const CONFIG = {
     type: "custom:very-custom-energy-house-card",
@@ -162,6 +169,7 @@
       wallbox: { entity: "sensor.wallbox_power" },
       heat_pump: { entity: "sensor.heat_pump_power" },
       air_conditioner: { entity: "sensor.air_conditioner_power" },
+      jacuzzi: { entity: "sensor.jacuzzi_power" },
       water_heater: { entity: "sensor.water_heater_power" },
       heating_rods: { entities: [{ entity: "sensor.heating_rod_power", name: "Heating rod" }] },
       lighting: { entity: "light.front_garden", power: "sensor.front_garden_lighting_power" },
@@ -188,7 +196,7 @@
       "sensor.battery_soc": { state: String(s.soc), attributes: { unit_of_measurement: "%", device_class: "battery" } },
       "sensor.pv_energy_today": { state: String(s.today), attributes: { unit_of_measurement: "kWh" } },
       "sensor.wallbox_power": P(s.wb), "sensor.heat_pump_power": P(s.hp), "sensor.air_conditioner_power": P(s.ac),
-      "sensor.water_heater_power": P(s.dlh), "sensor.heating_rod_power": P(s.rod),
+      "sensor.water_heater_power": P(s.dlh), "sensor.jacuzzi_power": P(state.jacuzzi ? 2800 : 0), "sensor.heating_rod_power": P(s.rod),
       "light.front_garden": { state: state.front ? "on" : "off", attributes: {} },
       "light.back_garden": { state: state.garden ? "on" : "off", attributes: {} },
       "light.indoor": { state: state.indoor ? "on" : "off", attributes: state.indoor ? { brightness: Math.round(state.brightness * 2.55) } : {} },
@@ -225,6 +233,7 @@
     document.getElementById("t-front").setAttribute("aria-pressed", state.front);
     document.getElementById("t-garden").setAttribute("aria-pressed", state.garden);
     document.getElementById("t-indoor").setAttribute("aria-pressed", state.indoor);
+    document.getElementById("t-jacuzzi").setAttribute("aria-pressed", state.jacuzzi);
     const h = hass();
     house.hass = h;
     flow.hass = h;
@@ -246,6 +255,12 @@
   document.getElementById("t-front").addEventListener("click", () => { state.front = !state.front; apply(); });
   document.getElementById("t-garden").addEventListener("click", () => { state.garden = !state.garden; apply(); });
   document.getElementById("t-indoor").addEventListener("click", () => { state.indoor = !state.indoor; apply(); });
+  document.getElementById("t-jacuzzi").addEventListener("click", () => { state.jacuzzi = !state.jacuzzi; apply(); });
+  document.getElementById("style").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    state.style = b.dataset.h; press("#style", "h", state.style);
+    house.setConfig({ ...CONFIG, house_style: state.style }); apply();
+  });
   document.getElementById("brightness").addEventListener("input", (e) => { state.brightness = +e.target.value; state.indoor = true; apply(); });
   window.addEventListener("hass-more-info", (e) => console.info("more-info:", e.detail.entityId));
   apply();

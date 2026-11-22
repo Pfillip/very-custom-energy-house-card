@@ -106,6 +106,18 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
                 },
               },
             },
+            {
+              name: "house_style",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "classic", label: t("editor.style_classic") },
+                    { value: "terraced", label: t("editor.style_terraced") },
+                  ],
+                },
+              },
+            },
           ]),
       {
         type: "expandable",
@@ -160,6 +172,11 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
         { name: "air_conditioner_name", selector: { text: {} } },
         { name: "air_conditioner_color", selector: { color_rgb: {} } },
       ], d.air_conditioner?.entity),
+      section(t("label.jacuzzi"), "mdi:hot-tub", [
+        { name: "jacuzzi", selector: SENSOR },
+        { name: "jacuzzi_name", selector: { text: {} } },
+        { name: "jacuzzi_color", selector: { color_rgb: {} } },
+      ], d.jacuzzi?.entity),
       section(t("label.water_heater"), "mdi:water-boiler", [
         { name: "water_heater", selector: SENSOR },
         { name: "water_heater_name", selector: { text: {} } },
@@ -277,7 +294,12 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     const t = this._t;
     const d = c.devices ?? {};
 
-    const mainData = { title: c.title, view: this._variant === "bar" ? undefined : c.view ?? "switch", entities: c.entities ?? {} };
+    const mainData = {
+      title: c.title,
+      view: this._variant === "bar" ? undefined : c.view ?? "switch",
+      house_style: this._variant === "bar" ? undefined : c.house_style ?? "classic",
+      entities: c.entities ?? {},
+    };
     const deviceData = {
       wallbox: d.wallbox?.entity,
       wallbox_name: d.wallbox?.name,
@@ -285,6 +307,8 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       heat_pump_name: d.heat_pump?.name,
       air_conditioner: d.air_conditioner?.entity,
       air_conditioner_name: d.air_conditioner?.name,
+      jacuzzi: d.jacuzzi?.entity,
+      jacuzzi_name: d.jacuzzi?.name,
       water_heater: d.water_heater?.entity,
       water_heater_name: d.water_heater?.name,
       water_heater_hide_inactive: d.water_heater?.hide_inactive ?? false,
@@ -299,7 +323,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       indoor_lighting_power: d.indoor_lighting?.power,
       indoor_lighting_brightness: d.indoor_lighting?.brightness,
       ...Object.fromEntries(
-        (["wallbox", "heat_pump", "air_conditioner", "water_heater", "lighting", "garden_lighting", "indoor_lighting"] as const).map((k) => [
+        (["wallbox", "heat_pump", "air_conditioner", "jacuzzi", "water_heater", "lighting", "garden_lighting", "indoor_lighting"] as const).map((k) => [
           `${k}_color`,
           hexToRgb(d[k]?.color),
         ]),
@@ -445,7 +469,12 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
   private _mainChanged(ev: CustomEvent): void {
     ev.stopPropagation();
     const v = ev.detail.value;
-    this._update({ title: v.title, view: v.view, entities: v.entities ?? {} });
+    this._update({
+      title: v.title,
+      view: v.view,
+      house_style: v.house_style === "terraced" ? "terraced" : undefined,
+      entities: v.entities ?? {},
+    });
   }
 
   private _devicesChanged(ev: CustomEvent): void {
@@ -458,6 +487,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     d.air_conditioner = v.air_conditioner
       ? { entity: v.air_conditioner, name: v.air_conditioner_name, color: color("air_conditioner") }
       : undefined;
+    d.jacuzzi = v.jacuzzi ? { entity: v.jacuzzi, name: v.jacuzzi_name, color: color("jacuzzi") } : undefined;
     d.water_heater = v.water_heater
       ? {
           entity: v.water_heater,

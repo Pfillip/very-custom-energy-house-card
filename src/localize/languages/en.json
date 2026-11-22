@@ -33,7 +33,8 @@
     "on": "on",
     "garden_lighting": "Garden lighting",
     "indoor_lighting": "Indoor lights",
-    "no_consumers": "No consumers configured yet."
+    "no_consumers": "No consumers configured yet.",
+    "jacuzzi": "Jacuzzi"
   },
   "editor": {
     "title": "Title (optional)",
@@ -106,6 +107,9 @@
     "untracked_color": "Color of “Untracked”",
     "section_indoor_lighting": "Indoor lights",
     "brightness": "Brightness (optional, e.g. number or input_number)",
-    "show_chips": "Show lighting and appliance chips"
+    "show_chips": "Show lighting and appliance chips",
+    "house_style": "House motif",
+    "style_classic": "Detached house with gable roof",
+    "style_terraced": "End-of-terrace house with flat roof and garages"
   }
 }

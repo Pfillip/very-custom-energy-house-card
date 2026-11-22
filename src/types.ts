@@ -18,6 +18,8 @@ export interface HomeAssistant {
 
 export type ViewMode = "house" | "flow" | "switch";
 
+export type HouseStyle = "classic" | "terraced";
+
 export interface ConsumerConfig {
   entity: string;
   name?: string;
@@ -70,6 +72,8 @@ export interface DevicesConfig {
   wallbox?: DeviceConfig;
   heat_pump?: DeviceConfig;
   air_conditioner?: DeviceConfig;
+  /** hot tub; in the terraced motif it appears in the back garden while it is running */
+  jacuzzi?: DeviceConfig;
   water_heater?: HidableDeviceConfig;
   heating_rods?: HeatingRodsConfig;
   /** front garden: wall light above the door and bollards along the walkway */
@@ -96,6 +100,8 @@ export interface CardConfig {
   type: string;
   title?: string;
   view?: ViewMode;
+  /** house motif of the house view */
+  house_style?: HouseStyle;
   entities: SourcesConfig;
   devices?: DevicesConfig;
   consumers?: ConsumerConfig[];
@@ -114,7 +120,7 @@ export interface CardConfig {
 
 export type FontWeight = "light" | "regular" | "medium" | "bold";
 
-export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod" | "lighting" | "garden_lighting" | "indoor_lighting";
+export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "jacuzzi" | "water_heater" | "heating_rod" | "lighting" | "garden_lighting" | "indoor_lighting";
 
 export interface DeviceState {
   kind: DeviceKind;

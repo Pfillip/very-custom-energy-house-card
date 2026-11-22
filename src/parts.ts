@@ -51,6 +51,7 @@ export function configEntityIds(c: CardConfig): string[] {
     d.wallbox?.entity,
     d.heat_pump?.entity,
     d.air_conditioner?.entity,
+    d.jacuzzi?.entity,
     d.water_heater?.entity,
     ...(d.heating_rods?.entities ?? []).map((r) => r.entity),
     ...(["lighting", "garden_lighting", "indoor_lighting"] as const).flatMap((k) => [

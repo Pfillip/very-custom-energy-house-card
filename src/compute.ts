@@ -1,4 +1,4 @@
-import { mdiAirConditioner, mdiEvStation, mdiLightbulbOutline, mdiOutdoorLamp, mdiHeatingCoil, mdiHeatPump, mdiWaterBoiler } from "@mdi/js";
+import { mdiAirConditioner, mdiEvStation, mdiHotTub, mdiLightbulbOutline, mdiOutdoorLamp, mdiHeatingCoil, mdiHeatPump, mdiWaterBoiler } from "@mdi/js";
 import { CONSUMER_PALETTE, DEFAULT_ACTIVE_THRESHOLD, DEVICE_COLORS } from "./const";
 import type { Localizer } from "./localize/localize";
 import type { CardConfig, DeviceState, Flows, HomeAssistant, LightingState } from "./types";
@@ -99,6 +99,7 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
     false,
     d.air_conditioner?.color,
   );
+  add("jacuzzi", d.jacuzzi?.entity, d.jacuzzi?.name || t("label.jacuzzi"), mdiHotTub, false, d.jacuzzi?.color);
   add(
     "water_heater",
     d.water_heater?.entity,

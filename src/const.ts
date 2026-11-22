@@ -26,6 +26,7 @@ export const DEVICE_COLORS = {
   wallbox: "#66bb6a",
   heat_pump: "#ef5350",
   air_conditioner: "#ab47bc",
+  jacuzzi: "#29b6f6",
   water_heater: "#26c6da",
   heating_rod: "#d84315",
   lighting: "#f5b941",

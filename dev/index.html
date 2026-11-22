@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Very Custom Energy House Card – Dev</title>
+<style>
+  body { margin: 0; padding: 24px; background: #111; font-family: Roboto, sans-serif; color: #e1e1e1;
+    --primary-text-color: #e1e1e1; --secondary-text-color: #9b9b9b; --primary-color: #03a9f4;
+    --card-background-color: #1c1c1c; --divider-color: rgba(255,255,255,.12); }
+  body.light { background: #f3f4f6; color: #212121; --primary-text-color: #212121; --secondary-text-color: #6b6f74;
+    --card-background-color: #fff; --divider-color: rgba(0,0,0,.12); }
+  .grid { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .grid > * { width: 480px; }
+  .controls { margin-bottom: 16px; display: flex; gap: 8px; }
+</style>
+<script>
+  // Minimal stand-ins for Home Assistant's own elements, so the card renders outside HA.
+  customElements.define("ha-card", class extends HTMLElement {
+    connectedCallback() { Object.assign(this.style, { display: "block", background: "var(--card-background-color)",
+      borderRadius: "12px", border: "1px solid var(--divider-color)" }); }
+  });
+  customElements.define("ha-svg-icon", class extends HTMLElement {
+    set path(p) { this.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" style="display:block"><path fill="currentColor" d="${p}"/></svg>`; }
+  });
+  customElements.define("ha-icon-button", class extends HTMLElement {
+    set path(p) { this.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" style="display:block;margin:8px"><path fill="currentColor" d="${p}"/></svg>`; }
+    set label(l) { this.title = l; }
+  });
+</script>
+<script type="module" src="../dist/very-custom-energy-house-card.js"></script>
+</head>
+<body>
+<div class="controls">
+  <button data-s="morning">Morgen</button><button data-s="noon">Mittag</button>
+  <button data-s="evening">Abend</button><button data-s="night">Nacht</button>
+  <button id="theme">Hell/Dunkel</button>
+</div>
+<div class="grid" id="grid"></div>
+<script type="module">
+  const S = (state, unit = "W", extra = {}) => ({ state: String(state), attributes: { unit_of_measurement: unit, device_class: "power", ...extra } });
+  const scenarios = {
+    noon:    { pv: 10.2, pvU: "kW", grid: -388, bat: -1800, soc: 78, wb: 3700, hp: 450, dlh: 0, rod1: 2000, rod2: 0, k: 620 },
+    morning: { pv: 0.9, pvU: "kW", grid: 20235, bat: 2500, soc: 41, wb: 0, hp: 1100, dlh: 21300, rod1: 0, rod2: 0, k: 640 },
+    evening: { pv: 0.42, pvU: "kW", grid: 1300, bat: 1650, soc: 64, wb: 0, hp: 1200, dlh: 0, rod1: 0, rod2: 0, k: 900 },
+    night:   { pv: 0, pvU: "kW", grid: 3474, bat: 0, soc: 50, wb: 0, hp: 850, dlh: 0, rod1: 0, rod2: 0, k: 1012 },
+  };
+  let dark = true;
+  function hass(name) {
+    const s = scenarios[name];
+    const states = {
+      "sensor.pv_power": S(s.pv, s.pvU),
+      "sensor.grid_power": S(s.grid),
+      "sensor.battery_power": S(s.bat),
+      "sensor.battery_soc": { state: String(s.soc), attributes: { unit_of_measurement: "%", device_class: "battery" } },
+      "sensor.pv_energy_today": { state: "24.8", attributes: { unit_of_measurement: "kWh" } },
+      "sensor.wallbox_power": S(s.wb),
+      "sensor.waermepumpe_power": S(s.hp),
+      "sensor.durchlauferhitzer_power": S(s.dlh),
+      "sensor.heizstab_puffer_power": S(s.rod1),
+      "sensor.heizstab_ww_power": S(s.rod2),
+      "sensor.alex_power": S(321, "W", { friendly_name: "Alex" }),
+      "sensor.kueche_power": S(s.k, "W", { friendly_name: "Küche" }),
+      "sensor.studio_power": S(269, "W", { friendly_name: "Studio" }),
+    };
+    for (const [k, v] of Object.entries(states)) v.entity_id = k;
+    return { states, language: "de", locale: { language: "de" }, themes: { darkMode: dark } };
+  }
+  const config = {
+    type: "custom:very-custom-energy-house-card", title: "Energie", view: "switch",
+    entities: { pv: "sensor.pv_power", grid: "sensor.grid_power", battery: "sensor.battery_power",
+      battery_soc: "sensor.battery_soc", pv_energy_today: "sensor.pv_energy_today" },
+    devices: {
+      wallbox: { entity: "sensor.wallbox_power" }, heat_pump: { entity: "sensor.waermepumpe_power" },
+      water_heater: { entity: "sensor.durchlauferhitzer_power", hide_inactive: false },
+      heating_rods: { hide_inactive: false, entities: [
+        { entity: "sensor.heizstab_puffer_power", name: "Heizstab Puffer" },
+        { entity: "sensor.heizstab_ww_power", name: "Heizstab WW" } ] },
+    },
+    consumers: [ { entity: "sensor.alex_power" }, { entity: "sensor.kueche_power" }, { entity: "sensor.studio_power" } ],
+  };
+  await customElements.whenDefined("very-custom-energy-house-card");
+  const grid = document.getElementById("grid");
+  const house = document.createElement("very-custom-energy-house-card");
+  house.setConfig(config);
+  const flow = document.createElement("very-custom-energy-house-card");
+  flow.setConfig({ ...config, view: "flow", devices: { ...config.devices,
+    water_heater: { ...config.devices.water_heater, hide_inactive: true },
+    heating_rods: { ...config.devices.heating_rods, hide_inactive: true } } });
+  grid.append(house, flow);
+  let current = "noon";
+  const apply = () => { const h = hass(current); house.hass = h; flow.hass = h; document.body.classList.toggle("light", !dark); };
+  document.querySelectorAll("[data-s]").forEach((b) => b.addEventListener("click", () => { current = b.dataset.s; apply(); }));
+  document.getElementById("theme").addEventListener("click", () => { dark = !dark; apply(); });
+  window.addEventListener("hass-more-info", (e) => console.log("more-info", e.detail.entityId));
+  apply();
+</script>
+</body>
+</html>

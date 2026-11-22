@@ -91,6 +91,9 @@ function bollard(x: number, y: number, uid: string): string {
     + `<rect class="lamp-head" x="${f1(t[0] - 0.14 * S)}" y="${f1(t[1] - 0.25 * S)}" width="${f1(0.28 * S)}" height="${f1(0.25 * S)}" rx="1"/>`;
 }
 
+/** Left edge of the visible drawing: cuts through the neighbour house so our house gets more room. */
+const VIEW_X = 68;
+
 // ---- layout constants
 const H = 6.2, X1 = 8, Y1 = 9;
 const GX0 = 11, GY0 = -2.5, GY1 = 3.4, GW = 3.1, GARAGES = 2;
@@ -235,7 +238,7 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
   const label = (anchor: V3, dx: number, dy: number, watts: number, name: string, entity?: string, stack = 0) => {
     const [value, unit] = ctx.power(watts);
     const a = P(anchor), y = a[1] + dy + stack * (k - 1);
-    const x = clampLabelX(a[0] + dx, `${value} ${unit}`, name, 22 * k, 12 * k, 480);
+    const x = clampLabelX(a[0] + dx, `${value} ${unit}`, name, 22 * k, 12 * k, 480, VIEW_X);
     const c = clickable(ctx, entity);
     return svg`
       <line class="leader" x1=${f1(a[0])} y1=${f1(a[1])} x2=${f1(x)} y2=${f1(y + (dy < 0 ? 22 * k : -16 * k))}></line>
@@ -256,7 +259,7 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
     (f.charge ? t("label.battery_charging") : f.discharge ? t("label.battery_discharging") : t("label.battery")) + socLabel;
 
   return svg`
-    <svg class="scene terraced" viewBox="0 4 480 362" role="img" aria-label=${t("label.view_house")}
+    <svg class="scene terraced" viewBox="${VIEW_X} 4 ${480 - VIEW_X} 362" role="img" aria-label=${t("label.view_house")}
       style=${`--vce-indoor:${indoor?.on ? (0.25 + 0.75 * indoor.brightness).toFixed(2) : 0};--vce-indoor-color:${indoor?.color ?? "#ffca28"}`}>
       <defs>
         <radialGradient id="${uid}-pool"><stop offset="0" stop-color="#ffcf6e" stop-opacity=".45"></stop><stop offset="1" stop-color="#ffcf6e" stop-opacity="0"></stop></radialGradient>

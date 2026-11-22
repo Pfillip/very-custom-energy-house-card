@@ -141,6 +141,7 @@ untracked_color: "#3fa3e8"
 | `active_threshold` | number | `10` | Power in W from which an appliance counts as active. |
 | `total_font_weight` | `light` \| `regular` \| `medium` \| `bold` | `light` | Font weight of the total next to the consumption bar. |
 | `untracked_color` | color | `#3fa3e8` | Color of the *Untracked* segment. |
+| `label_scale` | number (80–200) | `100` | Size of the labels in the house and flow drawing, in percent. Labels stay inside the drawing. |
 
 **Sources** (`entities`)
 

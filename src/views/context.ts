@@ -17,6 +17,18 @@ export interface ViewContext {
   moreInfo: (entityId?: string) => void;
 }
 
+/** Label size factor from the label_scale option (1 = 100 %). */
+export const labelScale = (ctx: ViewContext): number => (ctx.config.label_scale ?? 100) / 100;
+
+/**
+ * Keeps a centred label inside the drawing: estimates its width from the longer of
+ * value line and name line and moves the x position away from the edges.
+ */
+export function clampLabelX(x: number, value: string, name: string, valuePx: number, namePx: number, width: number): number {
+  const half = Math.max(value.length * valuePx * 0.66, name.length * namePx * 0.68) / 2 + 10;
+  return Math.min(width - half, Math.max(half, x));
+}
+
 export const COLOR = {
   pv: "var(--vce-pv-color)",
   grid: "var(--vce-grid-color)",

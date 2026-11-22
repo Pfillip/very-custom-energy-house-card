@@ -110,6 +110,7 @@
     "show_chips": "Chips für Beleuchtung und Geräte anzeigen",
     "house_style": "Hausmotiv",
     "style_classic": "Einfamilienhaus mit Satteldach",
-    "style_terraced": "Reihenendhaus mit Flachdach und Garagen"
+    "style_terraced": "Reihenendhaus mit Flachdach und Garagen",
+    "label_scale": "Schriftgröße der Beschriftungen in der Grafik"
   }
 }

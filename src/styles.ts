@@ -188,12 +188,13 @@ export const cardStyles = css`
     font-family: var(--ha-font-family-body, var(--paper-font-body1_-_font-family, Roboto, sans-serif));
     fill: var(--primary-text-color);
   }
-  .scene .val { font-size: 24px; font-weight: 700; }
-  .scene .unit { font-size: 13px; font-weight: 700; }
-  .scene .name { font-size: 12.5px; fill: var(--secondary-text-color); }
-  .scene .sub { font-size: 12px; font-weight: 700; }
-  .scene .strong { font-size: 12.5px; font-weight: 500; }
-  .scene .small { font-size: 11.5px; font-weight: 500; }
+  /* --vce-label-scale comes from the label_scale option (1 = 100 %) */
+  .scene .val { font-size: calc(24px * var(--vce-label-scale, 1)); font-weight: 700; }
+  .scene .unit { font-size: calc(13px * var(--vce-label-scale, 1)); font-weight: 700; }
+  .scene .name { font-size: calc(12.5px * var(--vce-label-scale, 1)); fill: var(--secondary-text-color); }
+  .scene .sub { font-size: calc(12px * var(--vce-label-scale, 1)); font-weight: 700; }
+  .scene .strong { font-size: calc(12.5px * var(--vce-label-scale, 1)); font-weight: 500; }
+  .scene .small { font-size: calc(11.5px * var(--vce-label-scale, 1)); font-weight: 500; }
   .scene .muted { fill: var(--secondary-text-color); }
   .leader { stroke: var(--secondary-text-color); stroke-width: 1; opacity: 0.7; }
   .link { cursor: pointer; outline: none; }
@@ -220,9 +221,9 @@ export const cardStyles = css`
   .lawn { fill: var(--vce-lawn); }
   /* terraced motif */
   .t-edge { stroke: rgba(0, 0, 0, 0.18); stroke-width: 0.6; stroke-linejoin: round; }
-  .terraced .val { font-size: 20px; }
-  .terraced .unit { font-size: 11px; }
-  .terraced .name { font-size: 11px; }
+  .terraced .val { font-size: calc(22px * var(--vce-label-scale, 1)); }
+  .terraced .unit { font-size: calc(12px * var(--vce-label-scale, 1)); }
+  .terraced .name { font-size: calc(12px * var(--vce-label-scale, 1)); }
   .bubble { fill: #e9f7ff; opacity: 0; animation: vce-bubble 2.4s ease-in infinite; }
   @keyframes vce-bubble { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 0.85; } 100% { opacity: 0; transform: translateY(-5px); } }
   .steam { fill: none; stroke: #e9eef2; stroke-width: 1.6; stroke-linecap: round; opacity: 0; animation: vce-steam 4.5s ease-in-out infinite; }

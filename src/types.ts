@@ -112,6 +112,8 @@ export interface CardConfig {
   show_chips?: boolean;
   animation?: boolean;
   active_threshold?: number;
+  /** size of the labels in the house and flow drawing, in percent (default 100) */
+  label_scale?: number;
   /** color of the "Untracked" segment */
   untracked_color?: string;
   /** font weight of the total next to the consumption bar */

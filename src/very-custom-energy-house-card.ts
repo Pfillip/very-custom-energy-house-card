@@ -103,7 +103,10 @@ export class VeryCustomEnergyHouseCard extends LitElement {
     const switchable = config.view === "switch" || !config.view;
 
     return html`
-      <ha-card class=${config.animation === false ? "static" : ""}>
+      <ha-card
+        class=${config.animation === false ? "static" : ""}
+        style=${config.label_scale ? `--vce-label-scale:${config.label_scale / 100}` : ""}
+      >
         ${config.title || switchable
           ? html`<div class="header">
               ${config.title ? html`<h1>${config.title}</h1>` : nothing}

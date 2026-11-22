@@ -3,7 +3,7 @@ import { ifDefined } from "lit/directives/if-defined.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { flowDuration } from "../format";
-import { clickable, COLOR, type ViewContext } from "./context";
+import { clampLabelX, clickable, COLOR, labelScale, type ViewContext } from "./context";
 
 /*
  * Second house motif: modern end-of-terrace house with flat roof, dark front volume,
@@ -183,6 +183,7 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
   const batteryPower = f.charge || f.discharge;
   const exporting = f.gridExport > f.gridImport;
   const indoor = ctx.indoorLighting, front = ctx.lighting, garden = ctx.gardenLighting;
+  const k = labelScale(ctx);
 
   // ---- dynamic drawing parts
   let dyn = "";
@@ -230,15 +231,17 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
     <path class="flow ${watts >= ctx.threshold ? "on" : ""}" d=${d}
       style=${styleMap({ stroke: color, animationDuration: `${flowDuration(watts)}s`, animationDirection: reverse ? "reverse" : "normal" })}></path>`;
 
-  const label = (anchor: V3, dx: number, dy: number, watts: number, name: string, entity?: string) => {
-    const a = P(anchor), x = a[0] + dx, y = a[1] + dy;
+  /** stack: extra vertical room per +100 % label size, so stacked labels on the right do not collide. */
+  const label = (anchor: V3, dx: number, dy: number, watts: number, name: string, entity?: string, stack = 0) => {
     const [value, unit] = ctx.power(watts);
+    const a = P(anchor), y = a[1] + dy + stack * (k - 1);
+    const x = clampLabelX(a[0] + dx, `${value} ${unit}`, name, 22 * k, 12 * k, 480);
     const c = clickable(ctx, entity);
     return svg`
-      <line class="leader" x1=${f1(a[0])} y1=${f1(a[1])} x2=${f1(x)} y2=${f1(y + (dy < 0 ? 22 : -16))}></line>
+      <line class="leader" x1=${f1(a[0])} y1=${f1(a[1])} x2=${f1(x)} y2=${f1(y + (dy < 0 ? 22 * k : -16 * k))}></line>
       <g class="label ${entity ? "link" : ""}" role=${ifDefined(c.role)} tabindex=${ifDefined(c.tabindex)} @click=${c.onClick} @keydown=${c.onKey}>
         <text x=${f1(x)} y=${f1(y)} text-anchor="middle"><tspan class="val">${value}</tspan><tspan class="unit" dx="2">${unit}</tspan></text>
-        <text class="name" x=${f1(x)} y=${f1(y + 15)} text-anchor="middle">${name}</text>
+        <text class="name" x=${f1(x)} y=${f1(y + 15 * k)} text-anchor="middle">${name}</text>
       </g>`;
   };
   const lamps = (list: [number, number][], state: typeof front) => {
@@ -253,7 +256,7 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
     (f.charge ? t("label.battery_charging") : f.discharge ? t("label.battery_discharging") : t("label.battery")) + socLabel;
 
   return svg`
-    <svg class="scene terraced" viewBox="0 0 480 400" role="img" aria-label=${t("label.view_house")}
+    <svg class="scene terraced" viewBox="0 4 480 362" role="img" aria-label=${t("label.view_house")}
       style=${`--vce-indoor:${indoor?.on ? (0.25 + 0.75 * indoor.brightness).toFixed(2) : 0};--vce-indoor-color:${indoor?.color ?? "#ffca28"}`}>
       <defs>
         <radialGradient id="${uid}-pool"><stop offset="0" stop-color="#ffcf6e" stop-opacity=".45"></stop><stop offset="1" stop-color="#ffcf6e" stop-opacity="0"></stop></radialGradient>
@@ -280,12 +283,12 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
       ${lamps(FRONT_LAMPS, front)}
 
       ${label([4, 4.5, H + 0.8], -40, -92, f.pv, t("label.pv"), e.pv)}
-      ${hasBattery ? label([X1 + 0.45, 7.2, 2.3], 150, -138, batteryPower, batteryName, e.battery || e.battery_soc) : nothing}
+      ${hasBattery ? label([X1 + 0.45, 7.2, 2.3], 150, -138, batteryPower, batteryName, e.battery || e.battery_soc, -70) : nothing}
       ${label([4.9, 12, 2.2], -52, 64, f.home, t("label.home"), e.home)}
       ${label([GX0 + 3, 15.2, 0], 96, 18, exporting ? f.gridExport : f.gridImport, exporting ? t("label.grid_export") : t("label.grid_import"), e.grid)}
-      ${wallbox ? label([GX0 + GW * 0.5, GY1, 2.8], 104, -88, wallbox.power, wallbox.active ? t("label.wallbox_charging") : wallbox.name, wallbox.entity) : nothing}
-      ${ac ? label([X1 + 0.6, 2.9, 2.3], 138, 82, ac.power, ac.name, ac.entity) : nothing}
+      ${wallbox ? label([GX0 + GW * 0.5, GY1, 2.8], 104, -88, wallbox.power, wallbox.active ? t("label.wallbox_charging") : wallbox.name, wallbox.entity, -20) : nothing}
+      ${ac ? label([X1 + 0.6, 2.9, 2.3], 138, 82, ac.power, ac.name, ac.entity, 50) : nothing}
       ${heatPump ? label([7.2, 12.9, 1.1], -8, 102, heatPump.power, heatPump.name, heatPump.entity) : nothing}
-      ${jacuzzi?.active ? label([19.6, -3.6, 1.0], 30, -34, jacuzzi.power, jacuzzi.name, jacuzzi.entity) : nothing}
+      ${jacuzzi?.active ? label([19.6, -3.6, 1.0], 30, -34, jacuzzi.power, jacuzzi.name, jacuzzi.entity, 20) : nothing}
     </svg>`;
 }

@@ -269,6 +269,14 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
             },
           },
           { name: "untracked_color", selector: { color_rgb: {} } },
+          ...(this._variant === "bar"
+            ? []
+            : [
+                {
+                  name: "label_scale",
+                  selector: { number: { min: 80, max: 200, step: 10, mode: "slider", unit_of_measurement: "%" } },
+                },
+              ]),
           {
             name: "active_threshold",
             selector: { number: { min: 0, max: 5000, step: 1, mode: "box", unit_of_measurement: "W" } },
@@ -345,6 +353,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       show_chips: c.show_chips ?? false,
       active_threshold: c.active_threshold ?? DEFAULT_ACTIVE_THRESHOLD,
       total_font_weight: c.total_font_weight ?? "light",
+      label_scale: c.label_scale ?? 100,
       untracked_color: hexToRgb(c.untracked_color),
     };
 
@@ -553,6 +562,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       show_chips: v.show_chips ? true : undefined,
       active_threshold: v.active_threshold === DEFAULT_ACTIVE_THRESHOLD ? undefined : v.active_threshold,
       total_font_weight: v.total_font_weight === "light" ? undefined : v.total_font_weight,
+      label_scale: v.label_scale && v.label_scale !== 100 ? v.label_scale : undefined,
       untracked_color: rgbToHex(v.untracked_color),
     });
   }

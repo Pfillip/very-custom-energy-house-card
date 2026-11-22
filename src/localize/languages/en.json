@@ -110,6 +110,7 @@
     "show_chips": "Show lighting and appliance chips",
     "house_style": "House motif",
     "style_classic": "Detached house with gable roof",
-    "style_terraced": "End-of-terrace house with flat roof and garages"
+    "style_terraced": "End-of-terrace house with flat roof and garages",
+    "label_scale": "Label size in the drawing"
   }
 }

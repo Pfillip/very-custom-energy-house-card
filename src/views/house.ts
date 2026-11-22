@@ -3,7 +3,7 @@ import { ifDefined } from "lit/directives/if-defined.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { DEVICE_COLORS } from "../const";
 import { flowDuration } from "../format";
-import { clickable, COLOR, type ViewContext } from "./context";
+import { clampLabelX, clickable, COLOR, labelScale, type ViewContext } from "./context";
 import {
   cuboid,
   DARK,
@@ -116,6 +116,7 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
   const batteryPower = f.charge || f.discharge;
   const exporting = f.gridExport > f.gridImport;
   const id = (name: string) => `${uid}-${name}`;
+  const k = labelScale(ctx);
 
   const flow = (d: string, watts: number, color: string, reverse = false) => svg`
     <path class="cable" d=${d}></path>
@@ -129,15 +130,16 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
       })}
     ></path>`;
 
-  const label = (x: number, y: number, watts: number, name: string, entity?: string, sub?: string) => {
+  const label = (x0: number, y: number, watts: number, name: string, entity?: string, sub?: string) => {
     const [value, unit] = ctx.power(watts);
+    const x = clampLabelX(x0, `${value} ${unit}`, name, 24 * k, 12.5 * k, 480);
     const c = clickable(ctx, entity);
     return svg`
       <g class="label ${entity ? "link" : ""}" role=${ifDefined(c.role)} tabindex=${ifDefined(c.tabindex)}
         @click=${c.onClick} @keydown=${c.onKey}>
         <text x=${x} y=${y} text-anchor="middle"><tspan class="val">${value}</tspan><tspan class="unit" dx="2">${unit}</tspan></text>
-        ${sub ? svg`<text class="sub" x=${x} y=${y + 19} text-anchor="middle">${sub}</text>` : nothing}
-        <text class="name" x=${x} y=${y + (sub ? 37 : 18)} text-anchor="middle">${name}</text>
+        ${sub ? svg`<text class="sub" x=${x} y=${y + 19 * k} text-anchor="middle">${sub}</text>` : nothing}
+        <text class="name" x=${x} y=${y + (sub ? 37 : 18) * k} text-anchor="middle">${name}</text>
       </g>`;
   };
   const led = (c: ReturnType<typeof cuboid>, s0: number, s1: number, t0: number, t1: number, on: boolean, color: string) =>
@@ -176,7 +178,7 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
       ${fan(c.face(0.36, 0.5), -30, heatPump.active, heatPump.color)}
       ${slats(c, 0.7, 0.92, [0.2, 0.35, 0.5, 0.65, 0.8])}
       <line class="leader" x1="342" y1="232" x2="400" y2="226"></line>
-      ${label(436, 224, heatPump.power, heatPump.name, heatPump.entity)}`;
+      ${label(436, 224 - 30 * (k - 1), heatPump.power, heatPump.name, heatPump.entity)}`;
   })();
 
   const airConditionerTpl = (() => {
@@ -298,7 +300,7 @@ export function renderHouse(ctx: ViewContext, uid: string): SVGTemplateResult {
       <line class="leader" x1="390" y1="302" x2="390" y2="355"></line>
       ${label(
         390,
-        276,
+        276 + 16 * (k - 1),
         exporting ? f.gridExport : f.gridImport,
         exporting ? t("label.grid_export") : t("label.grid_import"),
         e.grid,

@@ -5,6 +5,8 @@
 
 A Home Assistant dashboard card that shows your whole energy system in one place:
 
+![House view and flow view](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/overview.png)
+
 - **House view** – an isometric house with solar roof, inverter, battery and grid connection. Cables light up in the color of the energy source and run in the direction of the flow.
 - **Flow view** – solar, grid, battery and home as nodes with all six flow paths. Dot speed follows the power, the ring around *Home* shows where the energy comes from.
 - **Large appliances** – wallbox, heat pump, air conditioner, instantaneous water heater and any number of heating rods. Each one only appears once it is configured; water heater and heating rods can be hidden while inactive.
@@ -12,6 +14,14 @@ A Home Assistant dashboard card that shows your whole energy system in one place
 - **Key figures** – three slots with your own entities and names. Without an entity, the first two show live self-sufficiency and self-consumption.
 
 Everything can be configured in the visual editor. Colors follow the Home Assistant energy dashboard theme variables, light and dark themes are supported, and the card is translated into English and German.
+
+## Screenshots
+
+| House view | Flow view | Light theme |
+| --- | --- | --- |
+| ![House view with solar, battery, wallbox, heat pump and air conditioner](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/house-view.png) | ![Flow view with the water heater running](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/flow-view.png) | ![House view in a light theme](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/house-view-light.png) |
+
+*Screenshots use simulated sensor values from `dev/index.html`.*
 
 ## Installation
 

@@ -5,6 +5,9 @@
 ### Neu
 - **Eigene Farben für alle Verbraucher**: Wallbox, Wärmepumpe, Klimaanlage, Durchlauferhitzer, jeder Heizstab sowie die Beleuchtung vorn und hinten haben jetzt eine Farbe (`color`). Sie gilt für Leitung, Flussknoten, Chip und Balkensegment. Auch das Segment „Nicht erfasst“ lässt sich einfärben (`untracked_color`).
 - **Schrift der Gesamtleistung** neben dem Verbrauchsbalken einstellbar (`total_font_weight`: Leicht, Normal, Mittel, Fett).
+- **Kartengröße im Layout-Tab**: Im Sections-Dashboard lässt sich jetzt auch die Höhe einstellen. Bei fester Höhe passt sich die Grafik an, Balken und Kennzahlen scrollen notfalls. Mindestgröße: 6 Spalten × 5 Reihen.
+- **Breites Layout**: Ab etwa 720 px Breite stehen Chips, Verbrauchsbalken und Kennzahlen neben dem Haus statt darunter.
+- **Mitwachsende Schrift**: Gesamtleistung, Legende und Kennzahlen skalieren mit der Kartenbreite.
 
 ### Geändert
 - Die GitHub-Workflows nutzen Actions-Versionen für Node 24.

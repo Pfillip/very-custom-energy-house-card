@@ -172,6 +172,14 @@ untracked_color: "#3fa3e8"
 
 Power sensors may report W, kW or MW; values are converted automatically.
 
+### Size and layout
+
+The card adapts to the space it gets – there is nothing to configure:
+
+- **Sections dashboard**: resize the card in the *Layout* tab like any built-in card. With *automatic height* the drawing keeps its natural proportions; with a fixed height it shrinks or grows to fill the card, and the bar and key figures scroll if space gets really tight.
+- **Wide cards** (about 720 px and more): the drawing moves to the left and chips, consumption bar and key figures sit next to it.
+- **Text** of the bar, legend and key figures grows and shrinks with the card width.
+
 ## Screenshots
 
 | House view | Flow view | Light theme |
@@ -193,7 +201,7 @@ npm install
 npm run watch
 ```
 
-Serve the repository root (for example with `python3 -m http.server`) and open `http://localhost:8000/demo/` for the demo page or `http://localhost:8000/dev/` for the test page.
+Serve the repository root (for example with `python3 -m http.server`) and open `http://localhost:8000/demo/` for the demo page, `http://localhost:8000/dev/` for the test page or `http://localhost:8000/dev/sizes.html` to compare card sizes.
 
 Releases are built by GitHub Actions: publish a release with a tag like `v0.5.0` and the workflow attaches `very-custom-energy-house-card.js`. The demo is published to GitHub Pages on every push to `main`.
 

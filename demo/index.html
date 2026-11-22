@@ -58,7 +58,7 @@
   // Minimal stand-ins for Home Assistant's own elements, so the card renders outside HA.
   customElements.define("ha-card", class extends HTMLElement {
     connectedCallback() {
-      Object.assign(this.style, { display: "block", background: "var(--card-background-color)",
+      Object.assign(this.style, { background: "var(--card-background-color)",
         borderRadius: "12px", border: "1px solid var(--divider-color)" });
     }
   });

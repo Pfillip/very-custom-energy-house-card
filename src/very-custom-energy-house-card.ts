@@ -96,8 +96,13 @@ export class VeryCustomEnergyHouseCard extends LitElement {
     return size;
   }
 
+  /**
+   * Sections layout: full width by default, at least half a section wide.
+   * Leaving out `rows` keeps automatic height; a fixed height set in the layout tab
+   * is honoured because the house/flow drawing shrinks or grows to fill it.
+   */
   public getGridOptions() {
-    return { columns: 12, min_columns: 6 };
+    return { columns: 12, min_columns: 6, min_rows: 5 };
   }
 
   /** All entity ids this card reads; used to skip re-renders for unrelated state changes. */
@@ -173,10 +178,16 @@ export class VeryCustomEnergyHouseCard extends LitElement {
         ${missing.length
           ? html`<div class="warning">${missing.map((id) => html`<div>${t("label.entity_unavailable", { entity: id })}</div>`)}</div>`
           : nothing}
-        ${view === "house" ? renderHouse(ctx, this._uid) : renderFlow(ctx, this._uid)}
-        ${view === "house" ? this._renderChips(ctx) : nothing}
-        ${config.show_consumers !== false ? this._renderConsumption(flows, devices, ctx) : nothing}
-        ${config.show_kpis !== false ? this._renderKpis(flows, ctx) : html`<div class="spacer"></div>`}
+        <div class="body">
+          <div class="scene-wrap">
+            ${view === "house" ? renderHouse(ctx, this._uid) : renderFlow(ctx, this._uid)}
+          </div>
+          <div class="side">
+            ${view === "house" ? this._renderChips(ctx) : nothing}
+            ${config.show_consumers !== false ? this._renderConsumption(flows, devices, ctx) : nothing}
+            ${config.show_kpis !== false ? this._renderKpis(flows, ctx) : html`<div class="spacer"></div>`}
+          </div>
+        </div>
       </ha-card>
     `;
   }

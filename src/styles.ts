@@ -34,6 +34,7 @@ export const cardStyles = css`
     --vce-lawn: #d5e6c3;
     --vce-hedge: #8fb37a;
     display: block;
+    height: 100%;
   }
   :host([dark]) {
     --vce-idle-color: rgba(255, 255, 255, 0.13);
@@ -62,10 +63,66 @@ export const cardStyles = css`
   }
 
   ha-card {
+    container-type: inline-size;
     overflow: hidden;
     height: 100%;
     display: flex;
     flex-direction: column;
+  }
+
+  /*
+   * Sizing. ha-card is the size container:
+   * - automatic height: the drawing takes its natural aspect ratio,
+   * - fixed height (sections layout tab): the drawing shrinks or grows to fill what is left,
+   * - wide cards (≥ 720px): drawing on the left, chips, bar and key figures on the right.
+   * Font sizes of the bar, legend and key figures follow the card width (cqi units).
+   */
+  .body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .scene-wrap {
+    flex: 1 1 auto;
+    /* With a fixed card height the drawing keeps at least 40 % of it; percentages
+       resolve to nothing with automatic height, so the natural size applies there. */
+    min-height: max(120px, 40%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .scene-wrap > .scene {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+  }
+  .side {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  @container (min-width: 720px) {
+    .body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, 1fr);
+      align-items: center;
+    }
+    .scene-wrap {
+      height: 100%;
+    }
+    .side {
+      justify-content: center;
+      padding: 8px 0;
+    }
+    .side .kpis {
+      border-top: 0;
+      margin: 12px 16px 4px;
+      border: 1px solid var(--divider-color);
+      border-radius: 10px;
+    }
   }
   .header {
     display: flex;
@@ -217,13 +274,13 @@ export const cardStyles = css`
   .consumption { display: grid; gap: 10px; padding: 4px 16px 4px; }
   .consumption-row { display: flex; align-items: center; gap: 12px; }
   .total {
-    font-size: 30px;
+    font-size: clamp(22px, 6.2cqi, 40px);
     font-weight: 300;
     line-height: 1;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
   }
-  .total small { font-size: 14px; color: var(--secondary-text-color); margin-left: 1px; }
+  .total small { font-size: clamp(12px, 2.8cqi, 16px); color: var(--secondary-text-color); margin-left: 1px; }
   .bar { flex: 1; display: flex; gap: 1px; height: 34px; border-radius: 7px; overflow: hidden; min-width: 0; }
   .segment {
     display: grid;
@@ -245,7 +302,7 @@ export const cardStyles = css`
     flex-wrap: wrap;
     justify-content: center;
     gap: 4px 14px;
-    font-size: 13px;
+    font-size: clamp(11.5px, 2.7cqi, 14px);
     color: var(--secondary-text-color);
   }
   .legend button {
@@ -269,8 +326,8 @@ export const cardStyles = css`
   .kpi + .kpi { border-left: 1px solid var(--divider-color); }
   .kpi.link { cursor: pointer; }
   .kpi.link:focus-visible { outline: 2px solid var(--primary-color); outline-offset: -2px; }
-  .kpi b { font-size: 17px; font-weight: 500; font-variant-numeric: tabular-nums; }
-  .kpi span { font-size: 11.5px; color: var(--secondary-text-color); }
+  .kpi b { font-size: clamp(14px, 3.5cqi, 22px); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .kpi span { font-size: clamp(10.5px, 2.4cqi, 13px); color: var(--secondary-text-color); }
   .spacer { height: 12px; }
 
   @media (prefers-reduced-motion: reduce) {

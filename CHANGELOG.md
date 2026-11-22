@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.1
+
+### Behoben
+- **Visueller Editor aufgeräumt**: Großverbraucher haben jetzt je einen eigenen aufklappbaren Abschnitt (Wallbox, Wärmepumpe, Klimaanlage, Durchlauferhitzer, Beleuchtung Vorgarten, Beleuchtung Garten hinten) mit untereinander angeordneten Feldern und kurzen Beschriftungen. Bereits konfigurierte Geräte sind aufgeklappt.
+- Felder waren gegeneinander verschoben, weil Entitätsauswahl und Textfeld nebeneinander standen. Das betraf auch die Kennzahlen sowie die Zeilen für Verbraucher und Heizstäbe. Dort stehen die Felder jetzt ebenfalls untereinander.
+
 ## v0.4.0
 
 ### Neu

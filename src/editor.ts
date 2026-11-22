@@ -120,42 +120,71 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
     ];
   }
 
-  private _devicesSchema(): Schema[] {
+  /**
+   * One collapsible section per appliance with its fields stacked, so entity pickers
+   * (label above) and text fields (label inside) never share a row. Configured
+   * appliances start expanded.
+   */
+  private _devicesSchema(d: DevicesConfig): Schema[] {
+    const t = this._t;
+    const LIGHT = { entity: { filter: { domain: ["light", "switch", "input_boolean"] } } };
+    const section = (title: string, icon: string, fields: Schema[], configured?: string) => ({
+      type: "expandable",
+      name: "",
+      flatten: true,
+      title,
+      icon,
+      expanded: !!configured,
+      schema: fields,
+    });
     return [
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          { name: "wallbox", selector: SENSOR },
-          { name: "wallbox_name", selector: { text: {} } },
-          { name: "heat_pump", selector: SENSOR },
-          { name: "heat_pump_name", selector: { text: {} } },
-          { name: "air_conditioner", selector: SENSOR },
-          { name: "air_conditioner_name", selector: { text: {} } },
-          { name: "water_heater", selector: SENSOR },
-          { name: "water_heater_name", selector: { text: {} } },
-          { name: "lighting", selector: { entity: { filter: { domain: ["light", "switch", "input_boolean"] } } } },
-          { name: "lighting_name", selector: { text: {} } },
-          { name: "lighting_power", selector: SENSOR },
-          { name: "garden_lighting", selector: { entity: { filter: { domain: ["light", "switch", "input_boolean"] } } } },
-          { name: "garden_lighting_name", selector: { text: {} } },
-          { name: "garden_lighting_power", selector: SENSOR },
-        ],
-      },
-      { name: "water_heater_hide_inactive", selector: { boolean: {} } },
+      section(t("label.wallbox"), "mdi:ev-station", [
+        { name: "wallbox", selector: SENSOR },
+        { name: "wallbox_name", selector: { text: {} } },
+      ], d.wallbox?.entity),
+      section(t("label.heat_pump"), "mdi:heat-pump", [
+        { name: "heat_pump", selector: SENSOR },
+        { name: "heat_pump_name", selector: { text: {} } },
+      ], d.heat_pump?.entity),
+      section(t("label.air_conditioner"), "mdi:air-conditioner", [
+        { name: "air_conditioner", selector: SENSOR },
+        { name: "air_conditioner_name", selector: { text: {} } },
+      ], d.air_conditioner?.entity),
+      section(t("label.water_heater"), "mdi:water-boiler", [
+        { name: "water_heater", selector: SENSOR },
+        { name: "water_heater_name", selector: { text: {} } },
+        { name: "water_heater_hide_inactive", selector: { boolean: {} } },
+      ], d.water_heater?.entity),
+      section(t("editor.section_lighting"), "mdi:outdoor-lamp", [
+        { name: "lighting", selector: LIGHT },
+        { name: "lighting_power", selector: SENSOR },
+        { name: "lighting_name", selector: { text: {} } },
+      ], d.lighting?.entity),
+      section(t("editor.section_garden_lighting"), "mdi:outdoor-lamp", [
+        { name: "garden_lighting", selector: LIGHT },
+        { name: "garden_lighting_power", selector: SENSOR },
+        { name: "garden_lighting_name", selector: { text: {} } },
+      ], d.garden_lighting?.entity),
     ];
   }
 
+  /** Short field labels inside the appliance sections; the section title names the device. */
+  private _deviceLabel = (schema: Schema): string => {
+    const name = schema.name as string;
+    if (name.endsWith("_name")) return this._t("editor.name");
+    if (name.endsWith("_hide_inactive")) return this._t("editor.hide_inactive");
+    if (name.endsWith("_power")) return this._t("editor.power_optional");
+    if (name === "lighting" || name === "garden_lighting") return this._t("editor.light_entity");
+    return this._t("editor.power_sensor");
+  };
+
   private _kpiSchema(show: boolean): Schema[] {
     const t = this._t;
-    const pair = (key: string) => ({
-      type: "grid",
-      name: "",
-      schema: [
-        { name: `${key}_entity`, selector: SENSOR },
-        { name: `${key}_name`, selector: { text: {} } },
-      ],
-    });
+    // Stacked, not side by side: an entity picker and a text field do not line up in one row.
+    const pair = (key: string) => [
+      { name: `${key}_entity`, selector: SENSOR },
+      { name: `${key}_name`, selector: { text: {} } },
+    ];
     return [
       {
         type: "expandable",
@@ -166,7 +195,7 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
         schema: [
           { name: "show_kpis", selector: { boolean: {} } },
           ...(show
-            ? [{ type: "constant", name: "kpis_helper", value: "" }, pair("autarky"), pair("self_consumption"), pair("pv_today")]
+            ? [{ type: "constant", name: "kpis_helper", value: "" }, ...pair("autarky"), ...pair("self_consumption"), ...pair("pv_today")]
             : []),
         ],
       },
@@ -195,14 +224,8 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
 
   private _rowSchema(withColor: boolean): Schema[] {
     return [
-      {
-        type: "grid",
-        name: "",
-        schema: [
-          { name: "entity", required: true, selector: SENSOR },
-          { name: "name", selector: { text: {} } },
-        ],
-      },
+      { name: "entity", required: true, selector: SENSOR },
+      { name: "name", selector: { text: {} } },
       ...(withColor ? [{ name: "color", selector: { color_rgb: {} } }] : []),
     ];
   }
@@ -267,8 +290,8 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
             <ha-form
               .hass=${this.hass}
               .data=${deviceData}
-              .schema=${this._devicesSchema()}
-              .computeLabel=${this._label}
+              .schema=${this._devicesSchema(d)}
+              .computeLabel=${this._deviceLabel}
               @value-changed=${this._devicesChanged}
             ></ha-form>
             <h4>${t("editor.heating_rods")}</h4>

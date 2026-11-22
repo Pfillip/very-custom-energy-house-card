@@ -88,6 +88,12 @@
     "lighting_name": "Front garden lighting name",
     "garden_lighting": "Back garden lighting (light or switch)",
     "garden_lighting_name": "Back garden lighting name",
-    "garden_lighting_power": "Back garden lighting power (optional)"
+    "garden_lighting_power": "Back garden lighting power (optional)",
+    "section_lighting": "Front garden lighting",
+    "section_garden_lighting": "Back garden lighting",
+    "power_sensor": "Power sensor",
+    "power_optional": "Power sensor (optional, for the consumption bar)",
+    "light_entity": "Light or switch",
+    "hide_inactive": "Only show while active"
   }
 }

@@ -50,12 +50,21 @@ export interface SourcesConfig {
   pv_energy_today?: string;
 }
 
+export interface LightingConfig {
+  /** light, switch or input_boolean that switches the outdoor lighting */
+  entity?: string;
+  /** optional power sensor; adds the lighting to the consumption bar */
+  power?: string;
+  name?: string;
+}
+
 export interface DevicesConfig {
   wallbox?: DeviceConfig;
   heat_pump?: DeviceConfig;
   air_conditioner?: DeviceConfig;
   water_heater?: HidableDeviceConfig;
   heating_rods?: HeatingRodsConfig;
+  lighting?: LightingConfig;
 }
 
 /** One key figure. Without an entity, autarky and self-consumption are calculated live. */
@@ -84,7 +93,7 @@ export interface CardConfig {
   active_threshold?: number;
 }
 
-export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod";
+export type DeviceKind = "wallbox" | "heat_pump" | "air_conditioner" | "water_heater" | "heating_rod" | "lighting";
 
 export interface DeviceState {
   kind: DeviceKind;
@@ -96,6 +105,12 @@ export interface DeviceState {
   active: boolean;
   /** false when the device is configured to hide while inactive and is currently inactive */
   visible: boolean;
+}
+
+export interface LightingState {
+  entity: string;
+  name: string;
+  on: boolean;
 }
 
 export interface Flows {

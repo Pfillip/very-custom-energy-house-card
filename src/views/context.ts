@@ -1,12 +1,13 @@
 import type { PowerFormatter } from "../format";
 import type { Localizer } from "../localize/localize";
-import type { CardConfig, DeviceState, Flows } from "../types";
+import type { CardConfig, DeviceState, Flows, LightingState } from "../types";
 
 export interface ViewContext {
   config: CardConfig;
   flows: Flows;
   soc?: number;
   devices: DeviceState[];
+  lighting?: LightingState;
   threshold: number;
   t: Localizer;
   power: PowerFormatter;

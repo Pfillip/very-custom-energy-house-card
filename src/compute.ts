@@ -1,7 +1,7 @@
-import { mdiAirConditioner, mdiEvStation, mdiHeatingCoil, mdiHeatPump, mdiWaterBoiler } from "@mdi/js";
+import { mdiAirConditioner, mdiEvStation, mdiOutdoorLamp, mdiHeatingCoil, mdiHeatPump, mdiWaterBoiler } from "@mdi/js";
 import { CONSUMER_PALETTE, DEFAULT_ACTIVE_THRESHOLD, DEVICE_COLORS } from "./const";
 import type { Localizer } from "./localize/localize";
-import type { CardConfig, DeviceState, Flows, HomeAssistant } from "./types";
+import type { CardConfig, DeviceState, Flows, HomeAssistant, LightingState } from "./types";
 
 const UNIT_FACTORS: Record<string, number> = { mw: 1_000_000, kw: 1000, w: 1 };
 
@@ -112,7 +112,18 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
       d.heating_rods?.hide_inactive,
     ),
   );
+  // Outdoor lighting only shows up as a consumer when it has a power sensor.
+  if (d.lighting?.entity) {
+    add("lighting", d.lighting.power, d.lighting.name || t("label.lighting"), mdiOutdoorLamp);
+  }
   return list;
+}
+
+/** Outdoor lighting switch state; undefined when not configured. */
+export function lightingState(hass: HomeAssistant, config: CardConfig, t: Localizer): LightingState | undefined {
+  const l = config.devices?.lighting;
+  if (!l?.entity) return undefined;
+  return { entity: l.entity, name: l.name || t("label.lighting"), on: hass.states[l.entity]?.state === "on" };
 }
 
 export function consumerColor(index: number, color?: string): string {

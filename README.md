@@ -7,7 +7,8 @@ A Home Assistant dashboard card that shows your whole energy system in one place
 
 ![House view and flow view](https://raw.githubusercontent.com/Pfillip/very-custom-energy-house-card/main/docs/images/overview.png)
 
-- **House view** – an isometric house with solar roof, inverter, battery and grid connection. Cables light up in the color of the energy source and run in the direction of the flow.
+- **House view** – an isometric house with solar roof, windows, front door and walkway. Inverter, battery and appliances are mounted on the walls as 3D units; cables light up in the color of the energy source and run in the direction of the flow.
+- **Outdoor lighting** – a wall light above the door and bollards along the walkway light up while your outdoor light is on.
 - **Flow view** – solar, grid, battery and home as nodes with all six flow paths. Dot speed follows the power, the ring around *Home* shows where the energy comes from.
 - **Large appliances** – wallbox, heat pump, air conditioner, instantaneous water heater and any number of heating rods. Each one only appears once it is configured; water heater and heating rods can be hidden while inactive.
 - **Consumption bar** – your consumers and the large appliances as a stacked bar. Whatever is not covered shows up as *Untracked*.
@@ -65,6 +66,9 @@ devices:
     entity: sensor.heat_pump_power
   air_conditioner:
     entity: sensor.air_conditioner_power
+  lighting:
+    entity: light.outdoor                 # light, switch or input_boolean
+    power: sensor.outdoor_lighting_power  # optional, adds it to the bar
   water_heater:
     entity: sensor.water_heater_power
     hide_inactive: true
@@ -108,6 +112,7 @@ active_threshold: 10
 | `devices.wallbox` | object | – | `entity`, optional `name`. |
 | `devices.heat_pump` | object | – | `entity`, optional `name`. |
 | `devices.air_conditioner` | object | – | `entity`, optional `name`. |
+| `devices.lighting` | object | – | `entity` (light, switch or input_boolean), optional `power` sensor and `name`. |
 | `devices.water_heater` | object | – | `entity`, optional `name`, `hide_inactive`. |
 | `devices.heating_rods` | object | – | `entities` (list of `entity`, `name`), `hide_inactive`. |
 | `consumers` | list | `[]` | `entity`, optional `name` and `color`. |

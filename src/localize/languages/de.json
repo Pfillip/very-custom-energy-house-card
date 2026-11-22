@@ -27,7 +27,9 @@
     "view_flow": "Flussansicht",
     "entity_unavailable": "Entität nicht verfügbar: {entity}",
     "no_sources": "Noch keine Energiesensoren konfiguriert.",
-    "air_conditioner": "Klimaanlage"
+    "air_conditioner": "Klimaanlage",
+    "lighting": "Außenbeleuchtung",
+    "on": "an"
   },
   "editor": {
     "title": "Titel (optional)",
@@ -79,6 +81,9 @@
     "self_consumption_entity": "Kennzahl 2 – Entität",
     "self_consumption_name": "Kennzahl 2 – Name",
     "pv_today_entity": "Kennzahl 3 – Entität",
-    "pv_today_name": "Kennzahl 3 – Name"
+    "pv_today_name": "Kennzahl 3 – Name",
+    "lighting": "Außenbeleuchtung (Licht oder Schalter)",
+    "lighting_power": "Außenbeleuchtung – Leistung (optional)",
+    "lighting_name": "Name Außenbeleuchtung"
   }
 }

@@ -21,6 +21,16 @@ export const cardStyles = css`
     --vce-box: #f7f7f7;
     --vce-box-line: #9aa1a8;
     --vce-ground: rgba(40, 50, 60, 0.1);
+    --vce-box-top: #ffffff;
+    --vce-box-side: #d6dade;
+    --vce-dev-dark: #2f3a40;
+    --vce-dev-dark-top: #46535a;
+    --vce-dev-dark-side: #222a2e;
+    --vce-lamp-off: #6f7880;
+    --vce-door: #7b5d47;
+    --vce-path: #d4cdc2;
+    --vce-path-joint: #b9b1a5;
+    --vce-sill: #e9ecef;
     display: block;
   }
   :host([dark]) {
@@ -35,6 +45,16 @@ export const cardStyles = css`
     --vce-box: #d8d8d8;
     --vce-box-line: #8c8c8c;
     --vce-ground: rgba(0, 0, 0, 0.45);
+    --vce-box-top: #ececec;
+    --vce-box-side: #a4a7aa;
+    --vce-dev-dark: #2b3338;
+    --vce-dev-dark-top: #3f4a50;
+    --vce-dev-dark-side: #1c2226;
+    --vce-lamp-off: #55595e;
+    --vce-door: #5b4536;
+    --vce-path: #4a4744;
+    --vce-path-joint: #3a3836;
+    --vce-sill: #57595c;
   }
 
   ha-card {
@@ -112,6 +132,15 @@ export const cardStyles = css`
   .hp-top, .hp-side, .hp-front { stroke: var(--vce-box-line); stroke-width: 0.6; }
   .hp-fan { fill: none; stroke: var(--vce-box-line); stroke-width: 1.2; }
   .hp-fan.on { stroke: #ef5350; }
+  .solid { stroke: var(--vce-box-line); stroke-width: 0.6; stroke-linejoin: round; }
+  .slat { fill: none; stroke: var(--vce-box-side); stroke-width: 1; }
+  .mullion { fill: none; stroke: var(--vce-box-side); stroke-width: 1.2; }
+  .joint { fill: none; stroke: var(--vce-path-joint); stroke-width: 1; }
+  .foot { stroke: var(--vce-box-line); stroke-width: 1.6; }
+  .glow { opacity: 0; transition: opacity 0.5s; }
+  .lit .glow { opacity: 1; }
+  .lamp-head { fill: var(--vce-lamp-off); transition: fill 0.4s; }
+  .lit .lamp-head { fill: #ffd27a; }
   .ac-grille { fill: none; stroke: var(--vce-box-line); stroke-width: 1; }
   .ac-grille.on { stroke: #ab47bc; }
   .roof { fill: var(--vce-roof); }

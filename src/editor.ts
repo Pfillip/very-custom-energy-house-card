@@ -134,6 +134,9 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
           { name: "air_conditioner_name", selector: { text: {} } },
           { name: "water_heater", selector: SENSOR },
           { name: "water_heater_name", selector: { text: {} } },
+          { name: "lighting", selector: { entity: { filter: { domain: ["light", "switch", "input_boolean"] } } } },
+          { name: "lighting_name", selector: { text: {} } },
+          { name: "lighting_power", selector: SENSOR },
         ],
       },
       { name: "water_heater_hide_inactive", selector: { boolean: {} } },
@@ -221,6 +224,9 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       water_heater: d.water_heater?.entity,
       water_heater_name: d.water_heater?.name,
       water_heater_hide_inactive: d.water_heater?.hide_inactive ?? false,
+      lighting: d.lighting?.entity,
+      lighting_name: d.lighting?.name,
+      lighting_power: d.lighting?.power,
     };
     const k = c.kpis ?? {};
     const kpiData = {
@@ -373,6 +379,9 @@ export class VeryCustomEnergyHouseCardEditor extends LitElement {
       : undefined;
     d.water_heater = v.water_heater
       ? { entity: v.water_heater, name: v.water_heater_name, hide_inactive: v.water_heater_hide_inactive || undefined }
+      : undefined;
+    d.lighting = v.lighting
+      ? { entity: v.lighting, name: v.lighting_name, power: v.lighting_power }
       : undefined;
     this._update({ devices: d });
   }

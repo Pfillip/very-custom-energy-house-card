@@ -26,6 +26,7 @@ export const DEVICE_COLORS = {
   air_conditioner: "#ab47bc",
   water_heater: "#26c6da",
   heating_rod: "#d84315",
+  lighting: "#f5b941",
 } as const;
 
 export const UNTRACKED_COLOR = "#3fa3e8";

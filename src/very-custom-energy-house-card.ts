@@ -1,4 +1,4 @@
-import { mdiHomeOutline, mdiVectorPolyline } from "@mdi/js";
+import { mdiHomeOutline, mdiOutdoorLamp, mdiVectorPolyline } from "@mdi/js";
 import { html, LitElement, nothing, type PropertyValues, type TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -7,12 +7,13 @@ import {
   computeFlows,
   consumerColor,
   deviceStates,
+  lightingState,
   needsDarkText,
   readNumber,
   readPower,
   sourceValues,
 } from "./compute";
-import { CARD_TYPE, CARD_VERSION, EDITOR_TYPE, UNTRACKED_COLOR } from "./const";
+import { CARD_TYPE, CARD_VERSION, DEVICE_COLORS, EDITOR_TYPE, UNTRACKED_COLOR } from "./const";
 import "./editor";
 import { numberFormatter, powerFormatter } from "./format";
 import { localizer } from "./localize/localize";
@@ -107,6 +108,8 @@ export class VeryCustomEnergyHouseCard extends LitElement {
       c.devices?.heat_pump?.entity,
       c.devices?.air_conditioner?.entity,
       c.devices?.water_heater?.entity,
+      c.devices?.lighting?.entity,
+      c.devices?.lighting?.power,
       ...(c.devices?.heating_rods?.entities ?? []).map((r) => r.entity),
       ...(c.consumers ?? []).map((r) => r.entity),
       ...Object.values(c.kpis ?? {}).map((k) => k?.entity),
@@ -146,6 +149,7 @@ export class VeryCustomEnergyHouseCard extends LitElement {
       config,
       flows,
       devices,
+      lighting: lightingState(hass, config, t),
       soc: readNumber(hass, config.entities.battery_soc),
       threshold: activeThreshold(config),
       t,
@@ -164,7 +168,7 @@ export class VeryCustomEnergyHouseCard extends LitElement {
         ${missing.length
           ? html`<div class="warning">${missing.map((id) => html`<div>${t("label.entity_unavailable", { entity: id })}</div>`)}</div>`
           : nothing}
-        ${view === "house" ? renderHouse(ctx) : renderFlow(ctx, this._uid)}
+        ${view === "house" ? renderHouse(ctx, this._uid) : renderFlow(ctx, this._uid)}
         ${view === "house" ? this._renderChips(ctx) : nothing}
         ${config.show_consumers !== false ? this._renderConsumption(flows, devices, ctx) : nothing}
         ${config.show_kpis !== false ? this._renderKpis(flows, ctx) : html`<div class="spacer"></div>`}
@@ -192,8 +196,20 @@ export class VeryCustomEnergyHouseCard extends LitElement {
   /** Indoor appliances (water heater, heating rods) shown as chips below the house. */
   private _renderChips(ctx: ViewContext): TemplateResult | typeof nothing {
     const inner = ctx.devices.filter((d) => (d.kind === "water_heater" || d.kind === "heating_rod") && d.visible);
-    if (!inner.length) return nothing;
+    const light = ctx.lighting;
+    if (!inner.length && !light) return nothing;
     return html`<div class="chips">
+      ${light
+        ? html`<button
+            class="chip ${light.on ? "on" : ""}"
+            style=${styleMap({ "--chip-color": DEVICE_COLORS.lighting })}
+            @click=${() => this._moreInfo(light.entity)}
+          >
+            <ha-svg-icon .path=${mdiOutdoorLamp}></ha-svg-icon>
+            ${light.name}
+            <span class="state">${light.on ? ctx.t("label.on") : ctx.t("label.off")}</span>
+          </button>`
+        : nothing}
       ${inner.map(
         (d) => html`<button
           class="chip ${d.active ? "on" : ""}"

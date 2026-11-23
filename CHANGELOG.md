@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6.1
+
+### Geändert
+- README neu gestaltet: Galerie mit beiden Hausmotiven, Flussansicht, hellem Theme und Balken-Karte, neues Vorschau-GIF, Optionen in aufklappbaren Abschnitten.
+- Installations-Button für den neuen Home-Assistant-Marketplace (ab 2026.11) zusätzlich zum HACS-Button.
+- Social-Preview-Bild für das Repository.
+- Validierungs-Workflow läuft ohne Schreibrechte (`permissions: {}`).
+
 ## v0.6.0
 
 ### Neu

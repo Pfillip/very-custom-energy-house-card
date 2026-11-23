@@ -8,6 +8,8 @@ on:
     - cron: "17 3 * * 1"
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   hacs:
     runs-on: ubuntu-latest

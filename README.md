@@ -61,9 +61,12 @@
 
 ## Installation
 
-### HACS (recommended)
+### Marketplace / HACS (recommended)
 
+[![Open your Home Assistant instance and open this repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Pfillip&repository=very-custom-energy-house-card&category=plugin)
 [![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Pfillip&repository=very-custom-energy-house-card&category=plugin)
+
+The first button opens the Marketplace (Home Assistant 2026.11 and later), the second one HACS – it also reaches the Marketplace on newer versions. If the card is not listed yet, both offer to add it as a custom repository.
 
 Or by hand: HACS → ⋮ → **Custom repositories** → add `https://github.com/Pfillip/very-custom-energy-house-card` with type **Dashboard**, then download **Very Custom Energy House Card** and reload the browser.
 

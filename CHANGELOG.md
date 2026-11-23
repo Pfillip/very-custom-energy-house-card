@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.6.0 (in Arbeit)
+## v0.6.0
 
 ### Neu
 - **Zweites Hausmotiv: Reihenendhaus** (`house_style: terraced`): Flachdach mit PV, dunkler Vorbau, eingeschossiger Anbau mit Haustür, angedeutetes Nachbarhaus, zwei Garagen mit PV und roter Einfahrt, Garten hinter dem Haus. Wechselrichter, Akku und Klimaanlage hängen an der Giebelseite, die Wärmepumpe steht vor dem Haus, die Wallbox an der Garage. Licht im Haus, Beleuchtung vorn und Gartenbeleuchtung funktionieren wie beim bisherigen Haus. Im Editor unter „Hausmotiv“ wählbar.

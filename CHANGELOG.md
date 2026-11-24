@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.2
+
+### Sicherheit
+- **Farben aus der Konfiguration werden geprüft**, bevor die Karte sie verwendet. Erlaubt sind Hex-Werte (`#rgb`, `#rrggbb`, auch mit Alpha), CSS-Farbnamen sowie `rgb()`/`hsl()` mit Zahlen. Alles andere wird ignoriert, das Gerät zeigt dann seine Standardfarbe. Vorher konnte eine präparierte Farbe in YAML im Reihenendhaus-Motiv HTML in das Dashboard einschleusen (gemeldet im HACS-Review).
+- Im Reihenendhaus werden die farbigen Elemente von Klimaanlage, Wallbox und Wärmepumpe jetzt als Lit-Templates gezeichnet, die Werte automatisch maskieren.
+
 ## v0.6.1
 
 ### Geändert

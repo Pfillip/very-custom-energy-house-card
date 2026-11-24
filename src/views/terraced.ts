@@ -204,21 +204,30 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
   }
   if (ac) {
     dyn += box(X1, 2.2, 1.4, 0.6, 1.4, 0.9, BOX);
-    const c = P([X1 + 0.6, 2.9, 1.85]);
-    dyn += `<ellipse cx="${f1(c[0])}" cy="${f1(c[1])}" rx="${f1(0.3 * S)}" ry="${f1(0.38 * S)}" transform="rotate(-30 ${f1(c[0])} ${f1(c[1])})" style="fill:var(--vce-box-side);stroke:${ac.active ? ac.color : "var(--vce-box-line)"};stroke-width:1.2"/>`;
   }
   if (wallbox) {
     dyn += box(GX0 + 0.05, GY1, 0.9, 0.45, 0.18, 0.7, WB);
-    const l = P([GX0 + 0.27, GY1 + 0.18, 1.45]);
-    dyn += `<circle cx="${f1(l[0])}" cy="${f1(l[1])}" r="1.6" style="fill:${wallbox.active ? wallbox.color : "var(--vce-lamp-off)"}"/>`;
   }
   let front2 = "";
   if (heatPump) {
     front2 += box(6.4, 12.5, 0, 1.7, 0.8, 1.1, BOX);
-    const c = P([6.95, 13.3, 0.55]);
-    front2 += `<ellipse cx="${f1(c[0])}" cy="${f1(c[1])}" rx="${f1(0.38 * S)}" ry="${f1(0.3 * S)}" transform="rotate(30 ${f1(c[0])} ${f1(c[1])})" style="fill:var(--vce-box-side);stroke:${heatPump.active ? heatPump.color : "var(--vce-box-line)"};stroke-width:1.2"/>`;
     for (const z of [0.3, 0.55, 0.8]) front2 += `<polyline class="slat" points="${pts([[7.5, 13.3, z], [7.95, 13.3, z]])}"/>`;
   }
+  // Elements coloured from the card configuration are Lit templates, never part of the
+  // unsafeSVG strings: Lit escapes attribute bindings, so a colour can not inject markup.
+  const fanTpl = (center: P2, rx: number, ry: number, rotation: number, active: boolean, color: string) => {
+    const [x, y] = center.map(f1);
+    return svg`<ellipse cx=${x} cy=${y} rx=${f1(rx * S)} ry=${f1(ry * S)} transform="rotate(${rotation} ${x} ${y})"
+      style=${styleMap({ fill: "var(--vce-box-side)", stroke: active ? color : "var(--vce-box-line)", strokeWidth: "1.2" })}></ellipse>`;
+  };
+  const acFan = ac ? fanTpl(P([X1 + 0.6, 2.9, 1.85]), 0.3, 0.38, -30, ac.active, ac.color) : nothing;
+  const heatPumpFan = heatPump ? fanTpl(P([6.95, 13.3, 0.55]), 0.38, 0.3, 30, heatPump.active, heatPump.color) : nothing;
+  const wallboxLed = (() => {
+    if (!wallbox) return nothing;
+    const [x, y] = P([GX0 + 0.27, GY1 + 0.18, 1.45]).map(f1);
+    return svg`<circle cx=${x} cy=${y} r="1.6" style=${styleMap({ fill: wallbox.active ? wallbox.color : "var(--vce-lamp-off)" })}></circle>`;
+  })();
+
   let jac = "";
   if (jacuzzi?.active) {
     const { x, y, w } = JAC;
@@ -278,6 +287,8 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
       ${unsafeSVG(NEIGHBOUR)}
       ${unsafeSVG(HOUSE)}
       ${unsafeSVG(dyn)}
+      ${acFan}
+      ${wallboxLed}
 
       ${flow(PATHS.pv, f.pv, COLOR.pv)}
       ${hasBattery ? flow(PATHS.battery, batteryPower, f.charge ? COLOR.batIn : COLOR.batOut, f.discharge > 0) : nothing}
@@ -289,6 +300,7 @@ export function renderTerraced(ctx: ViewContext, uid: string): SVGTemplateResult
 
       ${unsafeSVG(ANNEX)}
       ${unsafeSVG(front2)}
+      ${heatPumpFan}
       ${lamps(FRONT_LAMPS, front)}
 
       ${label([4, 4.5, H + 0.8], -40, -92, f.pv, t("label.pv"), e.pv)}

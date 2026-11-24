@@ -10,6 +10,7 @@ import {
   needsDarkText,
   readNumber,
   readPower,
+  safeColor,
   sourceValues,
 } from "./compute";
 import { UNTRACKED_COLOR } from "./const";
@@ -133,7 +134,7 @@ export function renderConsumption(ctx: ViewContext): TemplateResult | typeof not
   const untracked = total - tracked;
   if (untracked > 0) items.push({
       name: ctx.t("label.untracked"),
-      color: ctx.config.untracked_color || UNTRACKED_COLOR,
+      color: safeColor(ctx.config.untracked_color, UNTRACKED_COLOR),
       power: untracked,
     });
   const n0 = numberFormatter(hass);

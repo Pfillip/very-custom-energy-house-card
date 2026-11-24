@@ -86,7 +86,7 @@ export function deviceStates(hass: HomeAssistant, config: CardConfig, t: Localiz
     if (!entity) return;
     const power = Math.max(0, readPower(hass, entity) ?? 0);
     const active = power >= threshold;
-    list.push({ kind, entity, name, icon, color: color || DEVICE_COLORS[kind], power, active, visible: active || !hideInactive });
+    list.push({ kind, entity, name, icon, color: safeColor(color, DEVICE_COLORS[kind]), power, active, visible: active || !hideInactive });
   };
 
   add("wallbox", d.wallbox?.entity, d.wallbox?.name || t("label.wallbox"), mdiEvStation, false, d.wallbox?.color);
@@ -155,7 +155,7 @@ export function lightingState(
   if (!l?.entity) return undefined;
   return {
     kind,
-    color: l.color || DEVICE_COLORS[kind],
+    color: safeColor(l.color, DEVICE_COLORS[kind]),
     entity: l.entity,
     name: l.name || t(`label.${kind}`),
     on: hass.states[l.entity]?.state === "on",
@@ -163,8 +163,19 @@ export function lightingState(
   };
 }
 
+/**
+ * Colours from the card configuration are user input (YAML can hold anything), so only plain
+ * colour values pass: hex (#rgb, #rgba, #rrggbb, #rrggbbaa), a CSS colour name made of letters,
+ * or rgb()/rgba()/hsl()/hsla() with numbers. Anything else falls back to the default colour.
+ */
+const SAFE_COLOR = /^(#[\da-f]{3,4}|#[\da-f]{6}|#[\da-f]{8}|[a-z]{3,30}|(rgb|hsl)a?\(\s*[\d.%]+(\s*[,\s/]\s*[\d.%]+){2,3}\s*\))$/i;
+
+export function safeColor(value: unknown, fallback: string): string {
+  return typeof value === "string" && SAFE_COLOR.test(value.trim()) ? value.trim() : fallback;
+}
+
 export function consumerColor(index: number, color?: string): string {
-  return color || CONSUMER_PALETTE[index % CONSUMER_PALETTE.length];
+  return safeColor(color, CONSUMER_PALETTE[index % CONSUMER_PALETTE.length]);
 }
 
 /** True when white text is hard to read on the given hex background. */
